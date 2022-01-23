@@ -20,7 +20,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Collection<Tracker> $trackers
- * @property Collection<Trace> $paths
+ * @property Collection<Trace> $traces
  */
 class User extends Authenticatable
 {
@@ -63,7 +63,7 @@ class User extends Authenticatable
 	}
 
 
-	public function paths(): HasMany
+	public function traces(): HasMany
 	{
 		return $this->hasMany(Trace::class);
 	}

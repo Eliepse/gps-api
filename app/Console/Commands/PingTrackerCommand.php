@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Events\CourseStarted;
+use App\Events\TraceStarted;
 use App\Events\Tracker\TrackerStatusChanged;
 use App\Models\Tracker;
 use App\Notifications\ControlTracker;

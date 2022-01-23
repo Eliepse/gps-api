@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\TraceStarted;
 use App\Events\Tracker\TrackerStatusChanged;
+use App\Listeners\ChangeTrackerStatus;
 use App\Listeners\SendActionToTracker;
 use App\Models\Tracker;
 use App\Observers\TrackerObserver;
@@ -20,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
 	protected $listen = [
 		Registered::class => [
 			SendEmailVerificationNotification::class,
+		],
+		TraceStarted::class => [
+			ChangeTrackerStatus::class,
 		],
 		TrackerStatusChanged::class => [
 			SendActionToTracker::class,

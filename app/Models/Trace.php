@@ -25,7 +25,7 @@ class Trace extends Model
 {
 	use HasFactory;
 
-	protected $fillable = [];
+	protected $fillable = ["uid", "status", "tracker_id"];
 
 	protected $casts = [
 		"status" => TraceStatus::class,
