@@ -34,6 +34,8 @@ class TrackerStateChannel
 		}
 
 		if ($authModel->is($tracker)) {
+			$tracker->status = TrackerStatus::Ready;
+			$tracker->save();
 			return true;
 		}
 
