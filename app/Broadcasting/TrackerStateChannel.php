@@ -24,7 +24,7 @@ class TrackerStateChannel
 	 *
 	 * @return bool
 	 */
-	public function join(User|Tracker $authModel, string $uid): bool
+	public function join(mixed $authModel, string $uid): bool
 	{
 		/** @var ?Tracker $tracker */
 		$tracker = Tracker::query()->where("status", "!=", TrackerStatus::Banned)->firstWhere("uid", $uid);
