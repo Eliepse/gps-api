@@ -29,7 +29,7 @@ class TrackerObserver
 	 */
 	public function updated(Tracker $tracker)
 	{
-		TrackerStatusChanged::dispatchIf($tracker->status !== $tracker->getOriginal("status"), [$tracker]);
+		TrackerStatusChanged::dispatchIf($tracker->status !== $tracker->getOriginal("status"), $tracker);
 	}
 
 
