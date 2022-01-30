@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-class StartNewTraceCommand extends Command
+class ManageActiveTraceCommand extends Command
 {
 	/**
 	 * The name and signature of the console command.
@@ -58,6 +58,8 @@ class StartNewTraceCommand extends Command
 
 			if ($this->confirm("Do you want to stop it?")) {
 				$activeTrace->status = TraceStatus::Finished;
+				$activeTrace->save();
+				$this->info("Trace stopped.");
 			}
 			return 0;
 		}
@@ -77,7 +79,6 @@ class StartNewTraceCommand extends Command
 		}
 
 		$trackerTitle = $this->choice("Which tracker?", $trackers->keyBy("id")->map(fn($t) => "$t->name ($t->id)")->toArray());
-
 		$tracker = $trackers[intval(explode(" (", $trackerTitle)[0])];
 
 		$trace = $user->traces()->make([
@@ -85,8 +86,8 @@ class StartNewTraceCommand extends Command
 			"status" => TraceStatus::Recording,
 			"tracker_id" => $tracker->id,
 		]);
-
 		$trace->save();
+		$this->info("Trace created and started.");
 		return 0;
 	}
 }
