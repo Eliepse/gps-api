@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Events\Tracker;
+namespace App\Events;
 
+use App\Enums\TrackerStatus;
 use App\Models\Tracker;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -13,30 +15,27 @@ class TrackerStatusChanged implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
+	private TrackerStatus $status;
+
+
 	/**
 	 * Create a new event instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(public Tracker $tracker) { }
+	public function __construct(public Tracker $tracker)
+	{
+		$this->status = $this->tracker->status;
+	}
 
 
 	/**
 	 * Get the channels the event should broadcast on.
 	 *
-	 * @return \Illuminate\Broadcasting\Channel|array
+	 * @return Channel
 	 */
 	public function broadcastOn()
 	{
 		return new PrivateChannel("App.Models.Tracker.{$this->tracker->uid}");
-	}
-
-
-	public function broadcastWith(): array
-	{
-		return [
-			"uid" => $this->tracker->uid,
-			"state" => $this->tracker->status,
-		];
 	}
 }

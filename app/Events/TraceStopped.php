@@ -4,10 +4,11 @@ namespace App\Events;
 
 use App\Models\Trace;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TraceStarted
+class TraceStopped
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -16,5 +17,16 @@ class TraceStarted
 	 *
 	 * @return void
 	 */
-	public function __construct(public Trace $trace) { }
+	public function __construct(public Trace $trace) {}
+
+
+	/**
+	 * Get the channels the event should broadcast on.
+	 *
+	 * @return \Illuminate\Broadcasting\Channel|array
+	 */
+	public function broadcastOn()
+	{
+		return new PrivateChannel('channel-name');
+	}
 }

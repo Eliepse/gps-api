@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Events\Tracker\TrackerStatusChanged;
+use App\Events\TrackerStatusChanged;
 use App\Models\Tracker;
 
 class TrackerObserver

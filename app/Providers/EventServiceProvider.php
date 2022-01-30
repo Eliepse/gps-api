@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Events\TraceStarted;
-use App\Events\Tracker\TrackerStatusChanged;
-use App\Listeners\ChangeTrackerStatus;
-use App\Listeners\SendActionToTracker;
+use App\Events\TraceStopped;
+use App\Events\TrackerStatusChanged;
+use App\Listeners\ShutdownTracker;
+use App\Listeners\StartTrackerTracking;
+use App\Listeners\StopTrackerTracking;
 use App\Models\Tracker;
 use App\Observers\TrackerObserver;
 use Illuminate\Auth\Events\Registered;
@@ -24,10 +26,13 @@ class EventServiceProvider extends ServiceProvider
 			SendEmailVerificationNotification::class,
 		],
 		TraceStarted::class => [
-			ChangeTrackerStatus::class,
+			StartTrackerTracking::class,
+		],
+		TraceStopped::class => [
+			StopTrackerTracking::class,
 		],
 		TrackerStatusChanged::class => [
-			SendActionToTracker::class,
+			ShutdownTracker::class,
 		],
 	];
 

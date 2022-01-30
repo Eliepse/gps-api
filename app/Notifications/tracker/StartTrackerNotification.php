@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\tracker;
 
+use App\Models\Trace;
 use Illuminate\Notifications\Notification;
 
-class ControlTracker extends Notification
+class StartTrackerNotification extends Notification
 {
+	public string $action = "track";
+
 
 	/**
 	 * Create a new notification instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(public string $action)
+	public function __construct(public Trace $trace)
 	{
 	}
 
@@ -41,6 +44,7 @@ class ControlTracker extends Notification
 	{
 		return [
 			'action' => $this->action,
+			"traceId" => $this->trace->id,
 		];
 	}
 }
