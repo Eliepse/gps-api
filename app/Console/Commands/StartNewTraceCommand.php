@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\TraceStatus;
 use App\Enums\TrackerStatus;
-use App\Events\TraceStarted;
+use App\Models\Trace;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -16,14 +16,14 @@ class StartNewTraceCommand extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'user:new-trace';
+	protected $signature = 'user:trace';
 
 	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
-	protected $description = 'Start a new trace for a user.';
+	protected $description = 'Manage user\'s traces (create or stop active one).';
 
 
 	/**
@@ -50,9 +50,20 @@ class StartNewTraceCommand extends Command
 		/** @var User $user */
 		$user = $users->firstWhere("name", $userName);
 
-		if ($user->traces()->where("status", "!=", TraceStatus::Finished->value)->count() > 0) {
-			$this->error("This user already have an trace recording.");
-			return 1;
+		/** @var Trace $activeTrace */
+		$activeTrace = $user->traces()->where("status", "!=", TraceStatus::Finished->value)->first();
+
+		if ($activeTrace) {
+			$this->info("This user already have an active trace.");
+
+			if ($this->confirm("Do you want to stop it?")) {
+				$activeTrace->status = TraceStatus::Finished;
+			}
+			return 0;
+		}
+
+		if (! $this->confirm("No active trace, do you want to create one?")) {
+			return 0;
 		}
 
 		$trackers = $user->trackers()
@@ -76,9 +87,6 @@ class StartNewTraceCommand extends Command
 		]);
 
 		$trace->save();
-
-		TraceStarted::dispatch($trace);
-
 		return 0;
 	}
 }
