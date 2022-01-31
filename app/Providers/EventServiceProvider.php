@@ -8,7 +8,9 @@ use App\Events\TrackerStatusChanged;
 use App\Listeners\ShutdownTracker;
 use App\Listeners\StartTrackerTracking;
 use App\Listeners\StopTrackerTracking;
+use App\Models\Trace;
 use App\Models\Tracker;
+use App\Observers\TraceObserver;
 use App\Observers\TrackerObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -45,5 +47,6 @@ class EventServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		Tracker::observe(TrackerObserver::class);
+		Trace::observe(TraceObserver::class);
 	}
 }
