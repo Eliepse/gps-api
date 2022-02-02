@@ -10,8 +10,8 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 	<link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
-<body class="font-sans antialiased">
-<main id="app"></main>
+<body class="font-sans antialiased h-screen">
+<main id="app" class="h-full"></main>
 <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>
