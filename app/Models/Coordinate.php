@@ -25,13 +25,11 @@ class Coordinate extends Model
 	];
 
 
-	public static function newFromTrackerTraceCoordinates(array $coord)
+	public static function newFromTrackerTraceCoordinates(array $coord): Coordinate
 	{
-		["lat" => $lat, "lon" => $lon, "alt" => $alt, "time" => $time] = $coord;
-
 		return new Coordinate([
-			"location" => new Point($lat, $lon, $alt),
-			"recorded_at" => Carbon::createFromTimestamp($time),
+			"location" => new Point($coord["lat"], $coord["lon"], $coord['alt'] ?? null),
+			"recorded_at" => Carbon::createFromTimestamp($coord["time"]),
 		]);
 	}
 
