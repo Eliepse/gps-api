@@ -18,8 +18,8 @@ class UpdateTraceCoordinatesController
 			return response(status: 403);
 		}
 
-		$coordinates = array_map(function ($coord) {
-			return Coordinate::newFromTrackerTraceCoordinates($coord);
+		$coordinates = array_map(function ($coord) use ($trace) {
+			return array_merge(Coordinate::newFromTrackerTraceCoordinates($coord)->toInsertQueryArray(), ["trace_id" => $trace->id]);
 		}, $request->segment);
 
 		$trace->coordinates()->insertOrIgnore($coordinates);
