@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
 	return view('welcome');
 });
+
+Route::view('/dashboard/{path?}', 'dashboard')
+	->where('path', '.*')
+	->middleware(['auth'])
+	->name('dashboard');
+
+require __DIR__ . '/auth.php';

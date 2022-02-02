@@ -1,0 +1,11 @@
+.root {
+	@apply h-full flex flex-col;
+}
+
+.header {
+	@apply flex-none;
+}
+
+.body {
+	@apply flex-1 overflow-y-auto;
+}

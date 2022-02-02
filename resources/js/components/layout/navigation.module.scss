@@ -1,0 +1,19 @@
+.root {
+	@apply flex bg-white shadow;
+}
+
+.nav {
+	@apply flex;
+}
+
+.menuItem {
+	@apply py-3 px-4;
+
+	&:hover {
+		@apply bg-slate-50;
+	}
+}
+
+:global(.active) .menuItem {
+	@apply bg-slate-100 underline;
+}

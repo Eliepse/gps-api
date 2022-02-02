@@ -1,4 +1,6 @@
-const mix = require('laravel-mix');
+const path = require("path");
+const mix = require("laravel-mix");
+const tailwindcss = require("tailwindcss");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,7 +13,21 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        //
-    ]);
+mix
+	.js("resources/js/app.js", "public/js")
+	.alias({
+		components: path.join(__dirname, "resources/js/components"),
+		pages: path.join(__dirname, "resources/js/pages"),
+	})
+	.react()
+	.sass("resources/css/app.scss", "public/css")
+	.options({
+		postCss: [tailwindcss()],
+	});
+
+if (mix.inProduction()) {
+	mix.version();
+} else {
+	mix.sourceMaps();
+	mix.disableSuccessNotifications();
+}
