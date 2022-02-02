@@ -28,8 +28,8 @@ class GPSTraceRequest extends FormRequest
 	{
 		return [
 			"segment" => ["required", "array", "min:1"],
-			"segment.*.lon" => ["required", "float"],
-			"segment.*.lat" => ["required", "float"],
+			"segment.*.lon" => ["required", "numeric"],
+			"segment.*.lat" => ["required", "numeric"],
 			"segment.*.alt" => ["float"],
 			"segment.*.time" => ["required", "int"],
 		];
