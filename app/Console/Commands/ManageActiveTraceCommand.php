@@ -70,7 +70,7 @@ class ManageActiveTraceCommand extends Command
 
 		$trackers = $user->trackers()
 			->where("registered", true)
-			->whereNotIn("status", [TrackerStatus::Banned->value, TrackerStatus::Unavailable->value])
+			->whereNotIn("status", [TrackerStatus::Banned->value])
 			->get(["id", "name"]);
 
 		if ($trackers->count() === 0) {
