@@ -31,7 +31,7 @@ class GPSTraceRequest extends FormRequest
 			"segment.*.lon" => ["required", "numeric"],
 			"segment.*.lat" => ["required", "numeric"],
 			"segment.*.alt" => ["float"],
-			"segment.*.time" => ["required", "int"],
+			"segment.*.time" => ["required", "numeric"],
 		];
 	}
 }

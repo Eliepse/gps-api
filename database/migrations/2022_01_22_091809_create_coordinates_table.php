@@ -20,7 +20,7 @@ class CreateCoordinatesTable extends Migration
 			$table->foreignIdFor(Trace::class);
 			$table->point("location");
 			$table->float("precision")->nullable();
-			$table->timestamp("recorded_at");
+			$table->timestamp("recorded_at", 3);
 
 			$table->unique(["trace_id", "location", "recorded_at"]);
 		});
