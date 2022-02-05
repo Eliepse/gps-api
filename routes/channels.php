@@ -1,6 +1,6 @@
 <?php
 
-use App\Broadcasting\TrackerChannel;
+use App\Broadcasting\TrackingChannel;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel("App.Models.Tracker.{uid}", TrackerChannel::class, ["middleware" => ["web", "api"]]);
+Broadcast::channel("tracking.{user}", TrackingChannel::class, ["middleware" => ["web", "api"]]);
