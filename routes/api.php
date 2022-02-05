@@ -23,6 +23,8 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::post("/tracker/{tracker:uid}/register", RegisterTrackerController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
+	Route::get("/me", fn(Request $request) => $request->user())->middleware(["user"]);
+
 	Route::get('/tracker', function (Request $request) {
 		/** @var Tracker $tracker */
 		$tracker = $request->user();

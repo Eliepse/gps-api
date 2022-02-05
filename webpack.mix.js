@@ -18,6 +18,7 @@ mix
 	.alias({
 		components: path.join(__dirname, "resources/js/components"),
 		pages: path.join(__dirname, "resources/js/pages"),
+		store: path.join(__dirname, "resources/js/store"),
 	})
 	.react()
 	.sass("resources/css/app.scss", "public/css")
