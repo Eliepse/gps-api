@@ -6,7 +6,7 @@ use App\Enums\TrackerStatus;
 use App\Models\Tracker;
 use App\Models\User;
 
-class TrackerStateChannel
+class TrackerChannel
 {
 	/**
 	 * Create a new channel instance.
@@ -22,9 +22,9 @@ class TrackerStateChannel
 	 * @param Tracker|User $authModel
 	 * @param string $uid
 	 *
-	 * @return bool
+	 * @return bool|array
 	 */
-	public function join(mixed $authModel, string $uid): bool
+	public function join(mixed $authModel, string $uid): bool|array
 	{
 		/** @var ?Tracker $tracker */
 		$tracker = Tracker::query()->where("status", "!=", TrackerStatus::Banned)->firstWhere("uid", $uid);
@@ -36,11 +36,11 @@ class TrackerStateChannel
 		if ($authModel->is($tracker)) {
 			$tracker->status = TrackerStatus::Ready;
 			$tracker->save();
-			return true;
+			return array_merge(["type" => "tracker", $tracker->toArray()]);
 		}
 
 		if (is_a($authModel, User::class, false) && $tracker->user_id === $authModel->id) {
-			return true;
+			return array_merge(["type" => "user", $authModel->toArray()]);
 		}
 
 		return false;
