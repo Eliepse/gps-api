@@ -36,6 +36,7 @@
         "react-leaflet": "^3.2.5",
         "react-redux": "^7.2.6",
         "react-router-dom": "6",
+        "robot3": "^0.2.21",
         "sass": "^1.49.7",
         "sass-loader": "^12.4.0"
     }

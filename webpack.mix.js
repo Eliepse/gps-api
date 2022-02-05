@@ -19,6 +19,7 @@ mix
 		components: path.join(__dirname, "resources/js/components"),
 		pages: path.join(__dirname, "resources/js/pages"),
 		store: path.join(__dirname, "resources/js/store"),
+		lib: path.join(__dirname, "resources/js/lib"),
 	})
 	.react()
 	.sass("resources/css/app.scss", "public/css")
