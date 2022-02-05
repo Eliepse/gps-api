@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\TrackerStatus;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,9 +33,9 @@ use Laravel\Sanctum\NewAccessToken;
  * @property-read ?User $user
  * @property-read Collection<Trace> $paths
  */
-class Tracker extends Model
+class Tracker extends Model implements AuthenticatableContract
 {
-	use HasFactory, HasApiTokens, Notifiable;
+	use HasFactory, HasApiTokens, Notifiable, Authenticatable;
 
 	protected $fillable = ["name", "description", "update_frequency"];
 
