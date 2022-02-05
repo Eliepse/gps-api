@@ -1,6 +1,6 @@
 <?php
 
-use App\Broadcasting\TrackerStateChannel;
+use App\Broadcasting\TrackerChannel;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -14,10 +14,4 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel("App.Models.Tracker.{uid}", TrackerStateChannel::class, ["middleware" => ["api"]]);
-
-// TODO: make this channel only accessible by users, not trackers
-//Broadcast::channel("App.Models.Tracker.{uid}", TrackerStateChannel::class);
-//Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-//	return (int)$user->id === (int)$id;
-//});
+Broadcast::channel("App.Models.Tracker.{uid}", TrackerChannel::class, ["middleware" => ["web", "api"]]);
