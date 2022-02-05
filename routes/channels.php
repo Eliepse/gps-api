@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel("App.Models.Tracker.{uid}", TrackerStateChannel::class, ["middleware" => ["web", "api", "tracker"]]);
+Broadcast::channel("App.Models.Tracker.{uid}", TrackerStateChannel::class, ["middleware" => ["api"]]);
 
 // TODO: make this channel only accessible by users, not trackers
 //Broadcast::channel("App.Models.Tracker.{uid}", TrackerStateChannel::class);
