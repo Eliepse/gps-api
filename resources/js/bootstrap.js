@@ -9,21 +9,21 @@ import dayjs from "dayjs";
  */
 
 const relativeTime = require("dayjs/plugin/relativeTime");
-const duration = require('dayjs/plugin/duration')
+const duration = require("dayjs/plugin/duration");
 dayjs.extend(relativeTime);
-dayjs.extend(duration)
+dayjs.extend(duration);
 
 window.Pusher = require("pusher-js");
 
 window.Echo = new Echo({
 	broadcaster: "pusher",
 	key: process.env.MIX_PUSHER_APP_KEY,
-	//cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 	wsHost: process.env.MIX_PUSHER_HOST,
 	wssHost: process.env.MIX_PUSHER_HOST,
 	wsPort: process.env.MIX_PUSHER_PORT,
 	wssPort: process.env.MIX_PUSHER_PORT,
-	forceTLS: false,
+	cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+	forceTLS: process.env.MIX_FORCE_TLS === "true",
 	authorizer: (channel, options) => {
 		return {
 			authorize: (socketId, callback) => {
