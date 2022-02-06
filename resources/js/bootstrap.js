@@ -25,7 +25,7 @@ window.Echo = new Echo({
 	cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 	forceTLS: process.env.MIX_FORCE_TLS === "true",
 	enableStats: false,
-	enabledTransports: ['ws', 'wss'],
+	//enabledTransports: ['ws', 'wss'],
 	authorizer: (channel, options) => {
 		return {
 			authorize: (socketId, callback) => {
