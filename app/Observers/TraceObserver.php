@@ -18,7 +18,7 @@ class TraceObserver
 	 */
 	public function created(Trace $trace)
 	{
-		TraceStarted::dispatchUnless($trace->status === TraceStatus::Finished, $trace);
+		TraceStarted::dispatchIf($trace->status === TraceStatus::Recording, $trace);
 	}
 
 
@@ -31,7 +31,7 @@ class TraceObserver
 	 */
 	public function updated(Trace $trace)
 	{
-		TraceStopped::dispatchIf($trace->status !== $trace->getOriginal("status"), $trace);
+		TraceStopped::dispatchIf($trace->status === TraceStatus::Finished, $trace);
 	}
 
 

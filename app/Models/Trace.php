@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\TraceStatus;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property-read int $id
+ * @property string $uid
  * @property int $user_id
  * @property int $tracker_id
  * @property TraceStatus $status
@@ -20,12 +22,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon $updated_at
  * @property-read User $user
  * @property-read Tracker $tracker
+ * @property-read Collection<Coordinate> $coordinates
  */
 class Trace extends Model
 {
 	use HasFactory;
 
-	protected $fillable = ["uid", "status", "tracker_id"];
+	protected $fillable = ["uid", "status", "tracker_id", "started_at"];
 
 	protected $casts = [
 		"status" => TraceStatus::class,

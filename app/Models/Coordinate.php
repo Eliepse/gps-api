@@ -30,6 +30,7 @@ class Coordinate extends Model
 	{
 		return new Coordinate([
 			"location" => new Point($coord["lat"], $coord["lon"], $coord['alt'] ?? null),
+			"precision" => $coord["precision"] ?? null,
 			"recorded_at" => Carbon::createFromTimestamp($coord["time"]),
 		]);
 	}
@@ -41,7 +42,7 @@ class Coordinate extends Model
 	}
 
 
-	public function toInsertQueryArray()
+	public function toInsertQueryArray(): array
 	{
 		return array_merge(
 			$this->toArray(),

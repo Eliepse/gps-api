@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CreateTraceController;
+use App\Http\Controllers\GetLiveDataController;
+use App\Http\Controllers\StopTraceController;
 use App\Http\Controllers\Trackers\RegisterTrackerController;
 use App\Http\Controllers\UpdateTraceCoordinatesController;
 use App\Models\Tracker;
@@ -25,6 +28,8 @@ Route::post("/tracker/{tracker:uid}/register", RegisterTrackerController::class)
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get("/me", fn(Request $request) => $request->user())->middleware(["user"]);
 
+	Route::get("/recoverData", GetLiveDataController::class);
+
 	Route::get('/tracker', function (Request $request) {
 		/** @var Tracker $tracker */
 		$tracker = $request->user();
@@ -32,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
 		$tracker->save();
 		return $tracker;
 	})->middleware(["tracker"]);
+	Route::post("/trace", CreateTraceController::class);
+	Route::post("/trace/{trace:uid}/stop", StopTraceController::class);
 
 	Route::post("/traces/{trace}/coordinates", UpdateTraceCoordinatesController::class)->middleware(["tracker"]);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TraceCoordinatesUpdated;
 use App\Http\Requests\GPSTraceRequest;
 use App\Models\Coordinate;
 use App\Models\Trace;
@@ -18,12 +19,16 @@ class UpdateTraceCoordinatesController
 			return response(status: 403);
 		}
 
-		$coordinates = array_map(function ($coord) use ($trace) {
-			return array_merge(Coordinate::newFromTrackerTraceCoordinates($coord)->toInsertQueryArray(), ["trace_id" => $trace->id]);
-		}, $request->segment);
+		$coordinates = collect($request->segment)->map(function ($coord) use ($trace) {
+			$coordinate = Coordinate::newFromTrackerTraceCoordinates($coord);
+			$coordinate->trace_id = $trace->id;
+			return $coordinate;
+		});
 
-		$trace->coordinates()->insertOrIgnore($coordinates);
+		$trace->coordinates()->insertOrIgnore($coordinates->map(fn($coord) => $coord->toInsertQueryArray())->toArray());
 		$tracker->seen()->save();
+
+		broadcast(new TraceCoordinatesUpdated($trace, $coordinates))->toOthers();
 
 		return response()->noContent();
 	}
