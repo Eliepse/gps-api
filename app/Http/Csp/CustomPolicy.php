@@ -15,6 +15,7 @@ class CustomPolicy extends \Spatie\Csp\Policies\Basic
 			->addDirective(Directive::DEFAULT, Keyword::SELF)
 			->addDirective(Directive::DEFAULT, "http://localhost:8080")
 			->addDirective(Directive::DEFAULT, "https://fonts.gstatic.com")
+			->addDirective(Directive::DEFAULT, "wss://*.pusher.com")
 			->addDirective(Directive::FORM_ACTION, Keyword::SELF)
 			->addDirective(Directive::IMG, Keyword::SELF)
 			->addDirective(Directive::IMG, "*.openstreetmap.fr")
