@@ -126,7 +126,7 @@ export function LivePage() {
 						)}
 					</div>
 					<div className={styles.overlayBody} />
-					<div className={clsx(styles.overlayFooter, "pb-6")}>
+					<div className={clsx(styles.overlayFooter, "pb-16")}>
 						{isState("waitLocation") && (
 							<Display className="px-4 flex items-center justify-center text-slate-400">
 								<span className="animate-spin text-2xl">🕛</span> Waiting GPS...
