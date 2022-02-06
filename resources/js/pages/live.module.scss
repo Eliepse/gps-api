@@ -1,0 +1,45 @@
+.viewport {
+	@apply relative h-full;
+}
+
+.overlay {
+	@apply absolute inset-0 flex flex-col z-10 pointer-events-none;
+}
+
+.overlayHeader > *,
+.overlayBody > *,
+.overlayFooter > * {
+	@apply pointer-events-auto;
+}
+
+.overlayHeader,
+.overlayFooter {
+	@apply flex-none flex flex-col justify-center px-4;
+}
+
+.overlayHeader {
+	@apply pt-6;
+}
+
+.overlayBody {
+	@apply flex-1;
+}
+
+.display {
+	@apply mx-auto rounded-lg bg-white shadow-md;
+	min-height: 3rem;
+}
+
+.actionBtn {
+	@apply px-4 py-2;
+	@apply rounded-full bg-white text-slate-700 text-lg cursor-pointer;
+	@apply shadow-md;
+}
+
+.actionBtn.primary {
+	@apply bg-blue-600 text-white;
+}
+
+.actionBtn.danger {
+	@apply bg-red-500 text-white;
+}

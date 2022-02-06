@@ -7,7 +7,7 @@ import { interpret } from "robot3";
  * @param {Object} initialContext
  * @param {Boolean|String} debug - Print state changes to the console. A string can be set to name the machine
  * @returns {{
- *    can: (function(String): boolean),
+ *    can: (function(...String): boolean),
  *    context: Object,
  *    state: String,
  *    send: (function(String, Object=): void),
