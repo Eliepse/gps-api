@@ -34,7 +34,7 @@ function updateTracker(ctx, { type, data }) {
 }
 
 function updateTrace(ctx, { data }) {
-	return { ...ctx, trace: data, path: [] };
+	return { ...ctx, trace: data };
 }
 
 function updateCoordinates(ctx, { data }) {
@@ -93,7 +93,12 @@ export const liveMachine = createMachine(
 		),
 		preRecording: invoke(
 			createTrace,
-			transition("done", "recording", reduce(updateTrace)),
+			transition(
+				"done",
+				"recording",
+				reduce((ctx) => ({ ...ctx, path: [] })),
+				reduce(updateTrace),
+			),
 			transition("error", "ready"),
 		),
 		recording: state(
