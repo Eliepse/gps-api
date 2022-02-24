@@ -156,7 +156,7 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{lastGPS && <Circle center={lastGPS.coordinates} radius={(lastGPS.precision || 2) * 2.5} />}
-					{path.length > 0 && <Polyline positions={path} />}
+					{path.length > 0 && <Polyline positions={path} color="#fb923c" />}
 				</MapContainer>
 			</div>
 		</Layout>
