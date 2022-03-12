@@ -4,9 +4,8 @@ namespace App\Events;
 
 use App\Models\Coordinate;
 use App\Models\Trace;
-use Illuminate\Broadcasting\Channel;
+use Duijker\LaravelMercureBroadcaster\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -36,6 +35,6 @@ class TraceCoordinatesUpdated implements ShouldBroadcast
 	 */
 	public function broadcastOn(): Channel
 	{
-		return new PresenceChannel("tracking.{$this->trace->user_id}");
+		return new Channel("tracking.{$this->trace->user_id}");
 	}
 }

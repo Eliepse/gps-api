@@ -33,7 +33,7 @@ use Laravel\Sanctum\NewAccessToken;
  * @property-read ?User $user
  * @property-read Collection<Trace> $paths
  */
-class Tracker extends Model implements AuthenticatableContract
+class Tracker extends Model implements AuthenticatableContract, MercureSubscriberInterface
 {
 	use HasFactory, HasApiTokens, Notifiable, Authenticatable;
 
@@ -118,5 +118,11 @@ class Tracker extends Model implements AuthenticatableContract
 	public function receivesBroadcastNotificationsOn(): string
 	{
 		return "App.Models.Tracker.$this->uid";
+	}
+
+
+	public function getMercureName(): string
+	{
+		return $this->name;
 	}
 }

@@ -22,7 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Collection<Tracker> $trackers
  * @property Collection<Trace> $traces
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MercureSubscriberInterface
 {
 	use HasApiTokens, HasFactory, Notifiable;
 
@@ -66,5 +66,11 @@ class User extends Authenticatable
 	public function traces(): HasMany
 	{
 		return $this->hasMany(Trace::class);
+	}
+
+
+	public function getMercureName(): string
+	{
+		return $this->name;
 	}
 }

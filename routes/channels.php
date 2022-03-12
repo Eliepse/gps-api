@@ -15,5 +15,5 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel("tracking.{user}", TrackingChannel::class, ["middleware" => ["web", "api"]]);
-Broadcast::channel("App.Models.Tracker.{uid}", ControlTrackerChannel::class, ["middleware" => ["api", "tracker"]]);
+//Broadcast::channel("tracking.{user}", TrackingChannel::class, ["middleware" => ["web", "api"]]);
+//Broadcast::channel("App.Models.Tracker.{uid}", ControlTrackerChannel::class, ["middleware" => ["api", "tracker"]]);

@@ -4,9 +4,8 @@ namespace App\Events;
 
 use App\Enums\TrackerStatus;
 use App\Models\Tracker;
-use Illuminate\Broadcasting\Channel;
+use Duijker\LaravelMercureBroadcaster\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -36,6 +35,6 @@ class TrackerStatusChanged implements ShouldBroadcast
 	 */
 	public function broadcastOn()
 	{
-		return new PresenceChannel("App.Models.Tracker.{$this->tracker->uid}");
+		return new Channel("App.Models.Tracker.{$this->tracker->uid}");
 	}
 }
