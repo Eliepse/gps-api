@@ -21,12 +21,15 @@ class MercureBroadcasterAuthorizationCookie
 			return $response;
 		}
 
-		return $response->withCookie($this->createCookie($request->user(), $request->secure()));
+		return $response->withCookie($this->createCookie($request->user()));
 	}
 
 
-	private function createCookie(MercureSubscriberInterface $user, bool $secure)
+	private function createCookie(MercureSubscriberInterface $user)
 	{
+		$mercureUrl = config("broadcasting.connections.mercure.url");
+		$mercureUrlInfo = parse_url($mercureUrl);
+
 		// Add topic(s) this user has access to
 		// This can also be URI Templates (to match several topics), or * (to match all topics)
 		$subscriptions = [
@@ -50,17 +53,14 @@ class MercureBroadcasterAuthorizationCookie
 			->getToken($jwtConfiguration->signer(), $jwtConfiguration->signingKey())
 			->toString();
 
-//		Log::channel("stderr")->debug($jwtConfiguration->signingKey()->contents());
-//		Log::debug("Created Mercure token for: $user->id", ["token" => $token, "key" => config('broadcasting.connections.mercure.secret')]);
-
 		return cookie()->make(
-			'mercureAuthorization',
-			$token,
-			15,
-			'/.well-known/mercure', // or which path you have mercure running
-			parse_url(config('app.url'), PHP_URL_HOST),
-			$secure,
-			true
+			name: 'mercureAuthorization',
+			value: $token,
+			minutes: 15,
+			path: $mercureUrlInfo["path"],
+			domain: $mercureUrlInfo["host"],
+			secure: $mercureUrlInfo["scheme"] === "https",
+			httpOnly: true,
 		);
 	}
 }
