@@ -38,34 +38,23 @@ export function LivePage() {
 			return;
 		}
 
-		window.Echo.join(`tracking.${userId}`)
-			.here((subscribers) => {
-				const tracker = subscribers.find((sub) => sub.type === "tracker");
-				if (tracker) {
-					send("trackerOnline", { tracker });
-				}
-			})
-			.joining((subscriber) => {
-				if (subscriber.type === "tracker") {
-					send("trackerOnline", { tracker: subscriber });
-				}
-			})
-			.leaving((subscriber) => {
-				if (subscriber.type === "tracker") {
-					send("trackerOffline");
-				}
-			})
-			.listenForWhisper("location", (data) => {
-				//noinspection JSCheckFunctionSignatures
-				setLastGPS(data);
-				send("locationUpdated");
-				map.current.panTo(data.coordinates);
-			})
-			.listen("TraceCoordinatesUpdated", (data) => send("updateTrace", data))
-			.error(console.error);
+		console.debug("Connect to mercure");
+
+		const subscribeURL = new URL(process.env.MIX_MERCURE_URL);
+		subscribeURL.searchParams.append("topic", "*");
+
+		console.debug(document.cookie);
+
+		const es = new EventSource(subscribeURL, { withCredentials: true });
+		es.addEventListener("open", console.debug);
+		es.addEventListener("error", console.debug);
+		es.addEventListener("message", (messageEvent) => {
+			console.debug(messageEvent);
+			console.debug(JSON.parse(messageEvent.data));
+		});
 
 		return () => {
-			window.Echo.leave(`tracking.${userId}`);
+			es.close();
 		};
 	}, [userId, state !== "init"]);
 
@@ -152,7 +141,7 @@ export function LivePage() {
 					className="h-full z-0"
 					center={[48.81602, 2.30063]}
 					zoom={19}
-					whenCreated={(m) => map.current = m}
+					whenCreated={(m) => (map.current = m)}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{lastGPS && <Circle center={lastGPS.coordinates} radius={(lastGPS.precision || 2) * 2.5} />}
