@@ -120,7 +120,6 @@ class Tracker extends Model implements AuthenticatableContract, MercureSubscribe
 		return "App.Models.Tracker.$this->uid";
 	}
 
-
 	public function getMercureName(): string
 	{
 		return $this->name;
