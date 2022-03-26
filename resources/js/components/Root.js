@@ -57,8 +57,16 @@ export const Root = () => {
 			}
 		}
 
-		Mercure.addListener("subscription", updateActiveTracker);
-		return () => Mercure.removeListener("subscription", updateActiveTracker);
+		function debug(data, event) {
+			console.debug(data);
+		}
+
+		Mercure.addPresenceListener(updateActiveTracker);
+		Mercure.addMessageListener("App\\Events\\TrackerStatusChanged", debug);
+		return () => {
+			Mercure.removePresenceListener(updateActiveTracker);
+			Mercure.removeMessageListener(debug);
+		};
 	}, [userUid]);
 
 	return (

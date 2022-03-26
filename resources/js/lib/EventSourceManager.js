@@ -1,3 +1,5 @@
+import { arrWrap } from "lib/supports/array";
+
 class EventSourceManager {
 	topics = [];
 
@@ -29,25 +31,47 @@ class EventSourceManager {
 		const data = JSON.parse(event.data);
 		const type = (data.type || "message").toLowerCase();
 
-		console.debug(type, data);
+		if (type === "message") {
+			this._listeners.message.forEach(({ events, callback }) => {
+				if (events === false) {
+					return;
+				}
 
-		this._listeners[type].forEach((listener) => listener(data));
+				if (events !== true && !arrWrap(events).includes(data.event)) {
+					return;
+				}
+
+				callback(data.data, data.event);
+			});
+		} else {
+			this._listeners[type].forEach((listener) => listener(data));
+		}
 	}
 
-	addListener(type, callback) {
-		if (!Object.keys(this._listeners).includes(type)) {
+	addPresenceListener(callback) {
+		this._listeners.subscription.push(callback);
+	}
+
+	/**
+	 *
+	 * @param {string|string[]|function(*, string): void} events
+	 * @param {function(event): void=} callback
+	 */
+	addMessageListener(events, callback) {
+		if (typeof events === "function") {
+			this._listeners.message.push({ events: true, callback: events });
 			return;
 		}
 
-		this._listeners[type].push(callback);
+		this._listeners.message.push({ events, callback });
 	}
 
-	removeListener(type, callback) {
-		if (!Object.keys(this._listeners).includes(type)) {
-			return;
-		}
+	removePresenceListener(callback) {
+		this._listeners.subscription = this._listeners.subscription.filter((listener) => listener !== callback);
+	}
 
-		this._listeners[type] = this._listeners[type].filter((listener) => listener !== callback);
+	removeMessageListener(callback) {
+		this._listeners.message = this._listeners.message.filter(({ callback: listener }) => listener !== callback);
 	}
 }
 
