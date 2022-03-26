@@ -111,13 +111,13 @@ class Tracker extends Model implements AuthenticatableContract, MercureSubscribe
 
 	public function broadcastChannel(): string
 	{
-		return "App.Models.Tracker.$this->uid";
+		return "/user/$this->user_id/trackers/$this->uid";
 	}
 
 
 	public function receivesBroadcastNotificationsOn(): string
 	{
-		return "App.Models.Tracker.$this->uid";
+		return "/user/$this->user_id/trackers/$this->uid";
 	}
 
 
@@ -137,6 +137,7 @@ class Tracker extends Model implements AuthenticatableContract, MercureSubscribe
 	{
 		return $this->uid;
 	}
+
 
 	public function getMercurePayload(): array
 	{

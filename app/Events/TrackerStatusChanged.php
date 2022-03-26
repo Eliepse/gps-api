@@ -33,8 +33,8 @@ class TrackerStatusChanged implements ShouldBroadcast
 	 *
 	 * @return Channel
 	 */
-	public function broadcastOn()
+	public function broadcastOn(): Channel
 	{
-		return new Channel("App.Models.Tracker.{$this->tracker->uid}");
+		return new Channel("/user/{$this->tracker->user_id}/trackers/{$this->tracker->uid}", true);
 	}
 }

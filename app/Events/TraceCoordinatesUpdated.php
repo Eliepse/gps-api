@@ -35,6 +35,6 @@ class TraceCoordinatesUpdated implements ShouldBroadcast
 	 */
 	public function broadcastOn(): Channel
 	{
-		return new Channel("tracking.{$this->trace->user_id}");
+		return new Channel("/user/{$this->trace->user_id}/trace/{$this->trace->uid}", true);
 	}
 }
