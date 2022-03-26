@@ -2,8 +2,10 @@
 
 namespace App\Mercure;
 
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -110,7 +112,14 @@ class MercureManager
 			$url .= "/" . urlencode($topic);
 		}
 
-		$response = Http::withHeaders(["Authorization" => "Bearer {$this->makeSudoToken()}"])->get($url);
-		return $response->json()["subscriptions"];
+		try {
+			$response = Http::withHeaders(["Authorization" => "Bearer {$this->makeSudoToken()}"])->get($url);
+			$subscriptions = $response->json()["subscriptions"];
+		} catch (Exception $e) {
+			Log::error("Could not connect to the Mercure Hub", ["message" => $e->getMessage()]);
+			$subscriptions = [];
+		}
+
+		return $subscriptions;
 	}
 }
