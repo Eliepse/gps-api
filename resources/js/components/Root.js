@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { hydrateUser } from "store/slices/userSlice";
 import { api } from "lib/api/axios";
-import { addTracker, hydrateTrackers, removeTracker } from "store/slices/trackersSlice";
+import { addTracker, hydrateTrackers, removeTracker, updateTrackerMetadata } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
 
 export const Root = () => {
@@ -35,7 +35,7 @@ export const Root = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		function updateActiveTracker(data) {
+		function updateActiveTrackers(data) {
 			const {
 				topic,
 				active,
@@ -57,17 +57,22 @@ export const Root = () => {
 			}
 		}
 
-		function debug(data, event) {
-			console.debug(data);
+		function handleTrackerMetadata(data) {
+			dispatch(updateTrackerMetadata(data));
 		}
 
-		Mercure.addPresenceListener(updateActiveTracker);
-		Mercure.addMessageListener("App\\Events\\TrackerStatusChanged", debug);
+		function debug(data, event) {
+			console.debug(event, data);
+		}
+
+		Mercure.addPresenceListener(updateActiveTrackers);
+		Mercure.addMessageListener("App\\Events\\TrackerMetadataUpdated", handleTrackerMetadata);
 		return () => {
-			Mercure.removePresenceListener(updateActiveTracker);
+			Mercure.removePresenceListener(updateActiveTrackers);
+			Mercure.removePresenceListener(handleTrackerMetadata);
 			Mercure.removeMessageListener(debug);
 		};
-	}, [userUid]);
+	}, [dispatch, userUid]);
 
 	return (
 		<Routes>

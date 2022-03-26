@@ -1,8 +1,10 @@
 import Layout from "components/layout/layout";
 import { useSelector } from "react-redux";
+import { getTrackers } from "store/slices/trackersSlice";
 
 export function IndexPage() {
-	const trackers = useSelector((store) => store.trackers);
+	const trackers = useSelector(getTrackers);
+	const metadata = useSelector(({ trackers }) => trackers.metadata);
 
 	return (
 		<Layout>
@@ -14,6 +16,7 @@ export function IndexPage() {
 						<tr>
 							<th className="text-left">Name</th>
 							<th className="pl-4 text-left">Status</th>
+							<th className="pl-4 text-left">Metadata</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -21,6 +24,14 @@ export function IndexPage() {
 							<tr className={!tracker.active && "text-gray-400"} key={tracker.uid}>
 								<td>{tracker.name}</td>
 								<td className="pl-4 ">{tracker.active ? "Connected" : "offline"}</td>
+								<td className="pl-4 ">
+									{tracker.active ? (
+										<>
+											<span>{metadata[tracker.uid]?.satellites?.visible?.length}</span>
+											<span>({metadata[tracker.uid]?.satellites?.active?.length})</span>
+										</>
+									) : null}
+								</td>
 							</tr>
 						))}
 					</tbody>
