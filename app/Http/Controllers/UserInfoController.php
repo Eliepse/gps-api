@@ -21,27 +21,12 @@ class UserInfoController extends Controller
 	{
 		/** @var User $user */
 		$user = $request->user();
-		$trackerUids = $user->trackers()->where("status", "!=", TrackerStatus::Banned)->get("uid");
+		$trackers = $user->trackers()->where("status", "!=", TrackerStatus::Banned)->get();
 		$subscribers = $mercure->fetchSubscriptions("/user/$user->id/trackers/{tracker}");
 
-		$activeTrackers = array_filter($subscribers, function ($sub) use ($trackerUids) {
-			$payload = $sub["payload"] ?? [];
+		$activeTrackersId = array_map(fn($sub) => $sub["payload"]["id"], $subscribers);
+		$trackers = $trackers->map(fn(Tracker $tracker) => [...$tracker->toArray(), "active" => in_array($tracker->getMercureId(), $activeTrackersId)]);
 
-			if ($payload["type"] ?? null !== Tracker::class) {
-				return false;
-			}
-
-			if (! $trackerUids->contains("uid", $payload["id"] ?? null)) {
-				return false;
-			}
-
-			return true;
-		});
-
-		return [
-			"user" => $user,
-			"activeTrackers" => array_map(fn($tracker) => $tracker["payload"]["id"], $activeTrackers),
-			"trackers" => [],
-		];
+		return ["user" => $user, "trackers" => $trackers];
 	}
 }
