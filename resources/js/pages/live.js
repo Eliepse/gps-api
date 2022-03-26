@@ -34,29 +34,8 @@ export function LivePage() {
 	}, []);
 
 	useEffect(() => {
-		if (!userId) {
-			return;
-		}
-
-		console.debug("Connect to mercure");
-
-		const subscribeURL = new URL(process.env.MIX_MERCURE_URL);
-		subscribeURL.searchParams.append("topic", "*");
-
-		console.debug(document.cookie);
-
-		const es = new EventSource(subscribeURL, { withCredentials: true });
-		es.addEventListener("open", console.debug);
-		es.addEventListener("error", console.debug);
-		es.addEventListener("message", (messageEvent) => {
-			console.debug(messageEvent);
-			console.debug(JSON.parse(messageEvent.data));
-		});
-
-		return () => {
-			es.close();
-		};
-	}, [userId, state !== "init"]);
+		return () => {};
+	}, [state !== "init"]);
 
 	/*
 	 |------------------

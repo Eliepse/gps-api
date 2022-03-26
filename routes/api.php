@@ -5,6 +5,7 @@ use App\Http\Controllers\GetLiveDataController;
 use App\Http\Controllers\StopTraceController;
 use App\Http\Controllers\Trackers\RegisterTrackerController;
 use App\Http\Controllers\UpdateTraceCoordinatesController;
+use App\Http\Controllers\UserInfoController;
 use App\Http\Middleware\MercureBroadcasterAuthorizationCookie;
 use App\Models\Tracker;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::post("/tracker/{tracker:uid}/register", RegisterTrackerController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
-	Route::get("/me", fn(Request $request) => $request->user())->middleware(["user"]);
+	Route::get("/me", UserInfoController::class);
 
 	Route::get("/recoverData", GetLiveDataController::class);
 
@@ -36,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		$tracker = $request->user();
 		$tracker->seen();
 		$tracker->save();
-		return $tracker;
+		return [...$tracker->toArray(), "channel" => "/$tracker->user_id/tracker/$tracker->id"];
 	})->middleware(["tracker", MercureBroadcasterAuthorizationCookie::class]);
 	Route::post("/trace", CreateTraceController::class);
 	Route::post("/trace/{trace:uid}/stop", StopTraceController::class);
