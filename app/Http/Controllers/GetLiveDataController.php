@@ -13,6 +13,7 @@ class GetLiveDataController extends \Illuminate\Routing\Controller
 	public function __invoke(Request $request)
 	{
 		$isTracker = is_a($request->user(), Tracker::class);
+		$isUser = is_a($request->user(), User::class);
 
 		if (is_a($request->user(), Tracker::class)) {
 			/** @var Tracker $tracker */
@@ -25,7 +26,7 @@ class GetLiveDataController extends \Illuminate\Routing\Controller
 
 		$query = $user->traces()->whereIn("status", [TraceStatus::Recording, TraceStatus::Pause]);
 
-		if (! $isTracker) {
+		if ($isUser) {
 			$query->with("coordinates");
 		}
 
