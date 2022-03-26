@@ -120,8 +120,32 @@ class Tracker extends Model implements AuthenticatableContract, MercureSubscribe
 		return "App.Models.Tracker.$this->uid";
 	}
 
+
+	public function getMercureType(): string
+	{
+		return self::class;
+	}
+
+
 	public function getMercureName(): string
 	{
 		return $this->name;
 	}
+
+
+	public function getMercureId(): int|string
+	{
+		return $this->uid;
+	}
+
+	public function getMercurePayload(): array
+	{
+		return [
+			"type" => $this->getMercureType(),
+			"name" => $this->getMercureName(),
+			"id" => $this->getMercureId(),
+		];
+	}
+
+
 }

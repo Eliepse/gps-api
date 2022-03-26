@@ -28,9 +28,6 @@ class MercureBroadcasterAuthorizationCookie
 
 	private function createCookie(MercureSubscriberInterface $user)
 	{
-		return $this->mercure->makeCookieToken(["*"], ["*"], [
-			"type" => get_class($user),
-			"name" => $user->getMercureName(),
-		]);
+		return $this->mercure->makeCookieToken(["*"], ["*"], $user->getMercurePayload());
 	}
 }

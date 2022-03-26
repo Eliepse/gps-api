@@ -73,4 +73,26 @@ class User extends Authenticatable implements MercureSubscriberInterface
 	{
 		return $this->name;
 	}
+
+
+	public function getMercureType(): string
+	{
+		return self::class;
+	}
+
+
+	public function getMercureId(): int|string
+	{
+		return $this->id;
+	}
+
+
+	public function getMercurePayload(): array
+	{
+		return [
+			"type" => $this->getMercureType(),
+			"name" => $this->getMercureName(),
+			"id" => $this->getMercureId(),
+		];
+	}
 }
