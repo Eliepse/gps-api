@@ -4,7 +4,7 @@ use App\Http\Controllers\CreateTraceController;
 use App\Http\Controllers\GetLiveDataController;
 use App\Http\Controllers\StopTraceController;
 use App\Http\Controllers\Trackers\RegisterTrackerController;
-use App\Http\Controllers\UpdateTraceCoordinatesController;
+use App\Http\Controllers\Trackers\UpdateTrackerController;
 use App\Http\Controllers\UserInfoController;
 use App\Http\Middleware\MercureBroadcasterAuthorizationCookie;
 use App\Models\Tracker;
@@ -39,8 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
 		$tracker->save();
 		return [...$tracker->toArray(), "channel" => "/$tracker->user_id/tracker/$tracker->id"];
 	})->middleware(["tracker", MercureBroadcasterAuthorizationCookie::class]);
+
+	Route::post("/tracker/self-update", UpdateTrackerController::class);
+
 	Route::post("/trace", CreateTraceController::class);
 	Route::post("/trace/{trace:uid}/stop", StopTraceController::class);
-
-	Route::post("/traces/{trace}/coordinates", UpdateTraceCoordinatesController::class)->middleware(["tracker"]);
 });
