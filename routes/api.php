@@ -35,9 +35,12 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/tracker', function (Request $request) {
 		/** @var Tracker $tracker */
 		$tracker = $request->user();
-		$tracker->seen();
-		$tracker->save();
-		return [...$tracker->toArray(), "channel" => "/$tracker->user_id/tracker/$tracker->id"];
+		$tracker->seen()->save();
+		return [...$tracker->toArray(), "topics" => [
+			$tracker->broadcastChannel(),
+			$tracker->getBroadcastToUserChannel(),
+		],
+		];
 	})->middleware(["tracker", MercureBroadcasterAuthorizationCookie::class]);
 
 	Route::post("/tracker/self-update", UpdateTrackerController::class);
