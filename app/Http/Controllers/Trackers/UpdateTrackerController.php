@@ -41,7 +41,7 @@ class UpdateTrackerController extends Controller
 			return response(status: 403);
 		}
 
-		$coordinates = collect($request->segment)->map(function ($coord) use ($trace) {
+		$coordinates = collect($request->coordinates)->map(function ($coord) use ($trace) {
 			$coordinate = Coordinate::newFromTrackerTraceCoordinates($coord);
 			$coordinate->trace_id = $trace->id;
 			return $coordinate;
