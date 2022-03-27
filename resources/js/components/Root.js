@@ -5,12 +5,12 @@ import { useEffect } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { hydrateUser } from "store/slices/userSlice";
 import { api } from "lib/api/axios";
-import { addTracker, hydrateTrackers, removeTracker, updateTrackerMetadata } from "store/slices/trackersSlice";
+import { connectTracker, disconnectTracker, hydrateTrackers, updateTrackerMetadata } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
 
 export const Root = () => {
 	const dispatch = useDispatch();
-	const userUid = useSelector((store) => store.user.uuid);
+	const userId = useSelector((store) => store.user.id);
 
 	useEffect(() => {
 		api
@@ -24,7 +24,7 @@ export const Root = () => {
 						`/user/${id}`,
 						`/user/${id}/trace/{trace}`,
 						`/user/${id}/trackers/{tracker}`,
-						`/.well-known/mercure/subscriptions/%2Fuser%2F${id}{/subscriber}`,
+						`/.well-known/mercure/subscriptions/%2Fuser%2F${id}%2Ftrackers%2F{tracker}{/subscriber}`,
 					];
 					Mercure.connect();
 				});
@@ -35,25 +35,23 @@ export const Root = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
+		const regex = new RegExp(`^\/user\/${userId}\/trackers\/[0-9a-zA-Z-]+$`);
+
 		function updateActiveTrackers(data) {
-			const {
-				topic,
-				active,
-				payload: { type },
-			} = data;
+			const { payload } = data;
 
-			if (!`^/\/user\/${userUid}\/trackers\/[0-9]+$/`.test(topic)) {
+			if (!regex.test(data.topic)) {
 				return;
 			}
 
-			if (type !== "\\App\\Models\\Tracker") {
+			if (payload.type !== "App\\Models\\Tracker") {
 				return;
 			}
 
-			if (active) {
-				dispatch(addTracker(data));
+			if (data.active) {
+				dispatch(connectTracker(payload));
 			} else {
-				dispatch(removeTracker(data));
+				dispatch(disconnectTracker(payload));
 			}
 		}
 
@@ -72,7 +70,7 @@ export const Root = () => {
 			Mercure.removePresenceListener(handleTrackerMetadata);
 			Mercure.removeMessageListener(debug);
 		};
-	}, [dispatch, userUid]);
+	}, [dispatch, userId]);
 
 	return (
 		<Routes>

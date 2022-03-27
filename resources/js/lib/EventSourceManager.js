@@ -6,7 +6,7 @@ class EventSourceManager {
 	_es;
 
 	_listeners = {
-		subscription: [],
+		presence: [],
 		message: [],
 	};
 
@@ -31,7 +31,7 @@ class EventSourceManager {
 		const data = JSON.parse(event.data);
 		const type = (data.type || "message").toLowerCase();
 
-		if (type === "message") {
+		if ("message" === type) {
 			this._listeners.message.forEach(({ events, callback }) => {
 				if (events === false) {
 					return;
@@ -43,13 +43,13 @@ class EventSourceManager {
 
 				callback(data.data, data.event);
 			});
-		} else {
-			this._listeners[type].forEach((listener) => listener(data));
+		} else if ("subscription" === type) {
+			this._listeners.presence.forEach((listener) => listener(data));
 		}
 	}
 
 	addPresenceListener(callback) {
-		this._listeners.subscription.push(callback);
+		this._listeners.presence.push(callback);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class EventSourceManager {
 	}
 
 	removePresenceListener(callback) {
-		this._listeners.subscription = this._listeners.subscription.filter((listener) => listener !== callback);
+		this._listeners.presence = this._listeners.presence.filter((listener) => listener !== callback);
 	}
 
 	removeMessageListener(callback) {

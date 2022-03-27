@@ -1,6 +1,7 @@
 import Layout from "components/layout/layout";
 import { useSelector } from "react-redux";
 import { getTrackers } from "store/slices/trackersSlice";
+import clsx from "clsx";
 
 export function IndexPage() {
 	const trackers = useSelector(getTrackers);
@@ -20,8 +21,8 @@ export function IndexPage() {
 						</tr>
 					</thead>
 					<tbody>
-						{trackers.map((tracker) => (
-							<tr className={!tracker.active && "text-gray-400"} key={tracker.uid}>
+						{Object.values(trackers).map((tracker) => (
+							<tr className={clsx(!tracker.active && "text-gray-400")} key={tracker.uid}>
 								<td>{tracker.name}</td>
 								<td className="pl-4 ">{tracker.active ? "Connected" : "offline"}</td>
 								<td className="pl-4 ">

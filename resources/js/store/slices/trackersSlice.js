@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { emptyObj } from "lib/supports/object";
 
 const initialState = {
-	trackers: [],
+	trackers: {},
 	metadata: {},
 };
 
@@ -11,14 +11,15 @@ export const slice = createSlice({
 	initialState,
 	reducers: {
 		hydrate: (state, action) => {
-			state.trackers = action.payload;
+			state.trackers = Object.fromEntries(action.payload.map((tracker) => [tracker.uid, tracker]));
 		},
-		add: (state, action) => {
-			state.trackers = [...state.trackers, action.payload];
+		connect: (state, action) => {
+			state.trackers[action.payload.id].active = true;
 		},
-		remove: (state, action) => {
+		disconnect: (state, action) => {
 			delete state.metadata[action.payload.id];
-			state.trackers = state.trackers.filter((tracker) => tracker.payload.id !== action.payload.id);
+			state.trackers[action.payload.id].active = false;
+			//state.trackers = state.trackers.filter((tracker) => tracker.payload.id !== action.payload.id);
 		},
 		updateMetadata: (state, action) => {
 			if (!action.payload.tracker.uid || !action.payload.metadata) {
@@ -36,8 +37,8 @@ export const getTrackerMetadata = (uid) => (state) => state.trackers.metadata[ui
 // Action creators are generated for each case reducer function
 export const {
 	hydrate: hydrateTrackers,
-	add: addTracker,
-	remove: removeTracker,
+	connect: connectTracker,
+	disconnect: disconnectTracker,
 	updateMetadata: updateTrackerMetadata,
 } = slice.actions;
 
