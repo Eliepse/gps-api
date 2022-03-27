@@ -26,7 +26,6 @@ class UpdateTrackerRequest extends FormRequest
 			"coordinates.*.alt" => ["float"],
 			"coordinates.*.time" => ["required", "numeric"],
 			"coordinates.*.precision" => ["numeric"],
-			"trace_id" => ["integer"],
 			"satellites" => ["array:visible,active"],
 			"satellites.visible" => ["integer"],
 			"satellites.active" => ["integer"],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Trackers;
 
+use App\Enums\TraceStatus;
 use App\Events\TrackerMetadataUpdated;
 use App\Http\Requests\UpdateTrackerRequest;
 use App\Models\Coordinate;
@@ -31,14 +32,10 @@ class UpdateTrackerController extends Controller
 		}
 
 		/** @var ?Trace $trace */
-		$trace = Trace::query()->find($request->trace_id);
+		$trace = $tracker->traces()->where("status", TraceStatus::Recording)->first();
 
 		if (! $trace) {
-			return response(status: 400);
-		}
-
-		if (! $trace->isRecording() || $trace->tracker_id !== $tracker->id) {
-			return response(status: 403);
+			return response()->noContent();
 		}
 
 		$coordinates = collect($request->coordinates)->map(function ($coord) use ($trace) {
