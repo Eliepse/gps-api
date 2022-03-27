@@ -27,8 +27,8 @@ export function IndexPage() {
 								<td className="pl-4 ">
 									{tracker.active ? (
 										<>
-											<span>{metadata[tracker.uid]?.satellites?.visible?.length}</span>
-											<span>({metadata[tracker.uid]?.satellites?.active?.length})</span>
+											<span>{metadata[tracker.uid]?.satellites?.visible}</span>
+											<span>({metadata[tracker.uid]?.satellites?.active})</span>
 										</>
 									) : null}
 								</td>

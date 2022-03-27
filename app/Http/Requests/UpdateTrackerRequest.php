@@ -28,8 +28,8 @@ class UpdateTrackerRequest extends FormRequest
 			"coordinates.*.precision" => ["numeric"],
 			"trace_id" => ["integer"],
 			"satellites" => ["array:visible,active"],
-			"satellites.visible" => ["array"],
-			"satellites.active" => ["array"],
+			"satellites.visible" => ["integer"],
+			"satellites.active" => ["integer"],
 		];
 	}
 }
