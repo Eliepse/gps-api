@@ -20,7 +20,7 @@ class UpdateTrackerRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			"coordinates" => ["array", "min:1"],
+			"coordinates" => ["array"],
 			"coordinates.*.lon" => ["required", "numeric"],
 			"coordinates.*.lat" => ["required", "numeric"],
 			"coordinates.*.alt" => ["float"],
