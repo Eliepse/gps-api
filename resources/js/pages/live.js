@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { useStateMachine } from "lib/useStateMachine";
 import { liveMachine } from "lib/stateMachines/liveMachine";
 import dayjs from "dayjs";
-import { api } from "lib/api/axios";
+import { Mercure } from "lib/EventSourceManager";
 
 export function LivePage() {
 	const map = useRef();
@@ -19,22 +19,35 @@ export function LivePage() {
 	const hasDataToDisplay = Boolean(trace);
 
 	useEffect(() => {
-		api
-			.get("/recoverData")
-			.then((res) => {
-				console.debug(res);
-				if (res.status === 204) {
-					send("freshStart");
-					return;
-				}
-
-				send("alreadyRecording", res.data);
-			})
-			.catch(console.error);
+		//api
+		//	.get("/recoverData")
+		//	.then((res) => {
+		//		console.debug(res);
+		//		if (res.status === 204) {
+		//			send("freshStart");
+		//			return;
+		//		}
+		//
+		//		send("alreadyRecording", res.data);
+		//	})
+		//	.catch(console.error);
 	}, []);
 
 	useEffect(() => {
-		return () => {};
+		function updateCurrentLocation(data) {
+			const { metadata } = data;
+			if (metadata.coordinates?.length > 0) {
+				const lastCoord = metadata.coordinates[metadata.coordinates.length - 1];
+				console.debug(lastCoord);
+				setLastGPS({ coordinates: [lastCoord.lat, lastCoord.lon] });
+			}
+		}
+
+		Mercure.addMessageListener("App\\Events\\TrackerMetadataUpdated", updateCurrentLocation);
+
+		return () => {
+			Mercure.removeMessageListener(updateCurrentLocation);
+		};
 	}, [state !== "init"]);
 
 	/*
@@ -123,7 +136,7 @@ export function LivePage() {
 					whenCreated={(m) => (map.current = m)}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
-					{lastGPS && <Circle center={lastGPS.coordinates} radius={(lastGPS.precision || 2) * 2.5} />}
+					{lastGPS && <Circle center={lastGPS.coordinates} radius={(lastGPS.precision || 2) * 2.5} color="#fb923c" />}
 					{path.length > 0 && <Polyline positions={path} color="#fb923c" />}
 				</MapContainer>
 			</div>
