@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\MercureBroadcasterAuthorizationCookie;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +19,7 @@ Route::get('/', function () {
 
 Route::view('/dashboard/{path?}', 'dashboard')
 	->where('path', '.*')
-	->middleware(['auth', MercureBroadcasterAuthorizationCookie::class])
+	->middleware(['auth'])
 	->name('dashboard');
 
 require __DIR__ . '/auth.php';

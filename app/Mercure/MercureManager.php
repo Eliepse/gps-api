@@ -53,7 +53,7 @@ class MercureManager
 			domain: $this->hubHost,
 			path: $this->hubPath,
 			secure: $this->hubHttps,
-			httpOnly: true,
+			httpOnly: false,
 		);
 	}
 

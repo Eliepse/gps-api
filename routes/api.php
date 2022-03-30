@@ -28,7 +28,9 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::post("/tracker/{tracker:uid}/register", RegisterTrackerController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
-	Route::get("/me", UserInfoController::class);
+	Route::get("/me", UserInfoController::class)->middleware([MercureBroadcasterAuthorizationCookie::class]);
+
+	Route::get("/mercure-token", fn() => response()->noContent())->middleware([MercureBroadcasterAuthorizationCookie::class]);
 
 	Route::get("/recoverData", GetLiveDataController::class);
 
@@ -36,10 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		/** @var Tracker $tracker */
 		$tracker = $request->user();
 		$tracker->seen()->save();
-		return [...$tracker->toArray(), "topics" => [
-			$tracker->broadcastChannel(),
-			$tracker->getBroadcastToUserChannel(),
-		],
+		return [...$tracker->toArray(), "topics" => [$tracker->broadcastChannel()],
 		];
 	})->middleware(["tracker", MercureBroadcasterAuthorizationCookie::class]);
 

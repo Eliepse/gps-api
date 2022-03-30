@@ -1,4 +1,5 @@
 import { arrWrap } from "lib/supports/array";
+import { api } from "lib/api/axios";
 
 class EventSourceManager {
 	topics = [];
@@ -9,6 +10,9 @@ class EventSourceManager {
 		presence: [],
 		message: [],
 	};
+
+	// Timer to refresh Mercure cookie
+	_refreshTokenInterval;
 
 	connect() {
 		console.debug("[Mercure] Connecting...");
@@ -21,10 +25,19 @@ class EventSourceManager {
 		this._es.addEventListener("open", () => console.debug("[Mercure] Connected."));
 		this._es.addEventListener("error", () => console.debug("[Mercure] Failed!"));
 		this._es.addEventListener("message", (event) => this._handleMessageEvent(event));
+
+		// Refresh the token every 10 minutes
+		this._refreshTokenInterval = setInterval(() => this.refreshToken(), 10 * 60_000);
 	}
 
 	disconnect() {
 		this._es.close();
+		clearInterval(this._refreshTokenInterval);
+	}
+
+	refreshToken() {
+		console.debug("Refresh token");
+		api("/mercure-token").finally(() => null);
 	}
 
 	_handleMessageEvent(event) {
