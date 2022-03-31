@@ -38,11 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
 		/** @var Tracker $tracker */
 		$tracker = $request->user();
 		$tracker->seen()->save();
-		return [...$tracker->toArray(), "topics" => [$tracker->broadcastChannel()],
+		return [...$tracker->toArray(), "topics" => [$tracker->broadcastChannel(), $tracker->getBroadcastToUserChannel()],
 		];
 	})->middleware(["tracker", MercureBroadcasterAuthorizationCookie::class]);
 
-	Route::post("/tracker/self-update", UpdateTrackerController::class);
+	Route::post("/tracker/self-update", UpdateTrackerController::class)->middleware([MercureBroadcasterAuthorizationCookie::class]);
 
 	Route::post("/trace", CreateTraceController::class);
 	Route::post("/trace/{trace:uid}/stop", StopTraceController::class);

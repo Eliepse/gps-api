@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TraceStatus;
 use App\Enums\TrackerStatus;
 use App\Mercure\MercureManager;
+use App\Models\Coordinate;
+use App\Models\Trace;
 use App\Models\Tracker;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,6 +29,20 @@ class UserInfoController extends Controller
 
 		$activeTrackersId = array_map(fn($sub) => $sub["payload"]["id"], $subscribers);
 		$trackers = $trackers->map(fn(Tracker $tracker) => [...$tracker->toArray(), "active" => in_array($tracker->getMercureId(), $activeTrackersId)]);
+
+		/** @var Trace $activeTrace */
+		$activeTrace = $user->traces()->where("status", TraceStatus::Recording)->orderByDesc("id")->first();
+
+		if ($activeTrace) {
+			return [
+				"user" => $user,
+				"trackers" => $trackers,
+				"trace" => [
+					...$activeTrace->toArray(),
+					"coordinates" => Coordinate::query()->select(["location"])->where("trace_id", $activeTrace->id)->orderBy("id")->get()->map(fn(Coordinate $coord) => $coord->getLatLng()),
+				],
+			];
+		}
 
 		return ["user" => $user, "trackers" => $trackers];
 	}

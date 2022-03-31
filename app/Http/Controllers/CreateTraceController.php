@@ -42,6 +42,7 @@ class CreateTraceController extends \Illuminate\Routing\Controller
 			"uid" => $trace->uid,
 			"tracker_uid" => $request->tracker->uid,
 			"started_at" => $trace->started_at,
+			"status" => TraceStatus::Recording,
 		];
 	}
 }

@@ -49,4 +49,10 @@ class Coordinate extends Model
 			["location" => $this->location->toWKT()],
 		);
 	}
+
+
+	public function getLatLng(): array
+	{
+		return [$this->location->getLat(), $this->location->getLng()];
+	}
 }

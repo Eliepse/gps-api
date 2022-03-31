@@ -55,7 +55,7 @@ class Trace extends Model
 	}
 
 
-	public function isRecording()
+	public function isRecording(): bool
 	{
 		return $this->status === TraceStatus::Recording;
 	}

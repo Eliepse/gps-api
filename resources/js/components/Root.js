@@ -7,6 +7,7 @@ import { hydrateUser } from "store/slices/userSlice";
 import { api } from "lib/api/axios";
 import { connectTracker, disconnectTracker, hydrateTrackers, updateTrackerMetadata } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
+import { hydrateTrace } from "store/slices/traceSlice";
 
 export const Root = () => {
 	const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export const Root = () => {
 					const { id } = res.data.user;
 					dispatch(hydrateUser(res.data.user));
 					dispatch(hydrateTrackers(res.data.trackers));
+					dispatch(hydrateTrace(res.data.trace));
 					Mercure.topics = [
 						`/user/${id}`,
 						`/user/${id}/trace/{trace}`,

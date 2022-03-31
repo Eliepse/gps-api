@@ -2,21 +2,65 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "components/layout/layout";
 import { Circle, MapContainer, Polyline, TileLayer } from "react-leaflet";
 import styles from "./live.module.scss";
-import { useSelector } from "react-redux";
-import { getUserId } from "store/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
-import { useStateMachine } from "lib/useStateMachine";
-import { liveMachine } from "lib/stateMachines/liveMachine";
 import dayjs from "dayjs";
+import { api } from "lib/api/axios";
+import { arrLast, emptyArray } from "lib/supports/array";
+import { addCoordinates, hydrateTrace } from "store/slices/traceSlice";
+import { hasOnlineTracker } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
 
 export function LivePage() {
 	const map = useRef();
-	const userId = useSelector(getUserId);
-	const [lastGPS, setLastGPS] = useState();
-	const { isState, can, send, context, state } = useStateMachine(liveMachine, {}, true);
-	const { trace } = context;
-	const hasDataToDisplay = Boolean(trace);
+	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
+	const [autoPan, setAutoPan] = useState(true);
+
+	const trackers = useSelector((state) => state.trackers.trackers);
+	const trackersMetadata = useSelector((state) => state.trackers.metadata);
+	const isTrackerOnline = useSelector(hasOnlineTracker);
+	const trace = useSelector((state) => state.trace);
+	const lastMetadata = arrLast(Object.values(trackersMetadata));
+
+	const hasTrace = Boolean(trace);
+	const isTracking = trace?.started_at && !trace?.ended_at;
+	const hasMetadata = Boolean(lastMetadata);
+
+	/*
+	 | ************************
+	 | Actions
+	 | ************************
+	 */
+
+	function startTrace() {
+		const trackersArray = Object.values(trackers);
+		if (trackersArray.length === 0) {
+			return;
+		}
+
+		setLoading(true);
+
+		api
+			.post("/trace", { tracker_uid: trackersArray[0].uid })
+			.then(({ data }) => dispatch(hydrateTrace(data)))
+			.catch(console.error)
+			.finally(() => setLoading(false));
+	}
+
+	function stopTrace() {
+		if (!isTracking) {
+			return;
+		}
+
+		setLoading(true);
+
+		api
+			.post(`/trace/${trace.uid}/stop`)
+			.then(({ data }) => dispatch(hydrateTrace(data)))
+			.catch(console.error)
+			.finally(() => setLoading(false));
+	}
 
 	useEffect(() => {
 		//api
@@ -33,92 +77,110 @@ export function LivePage() {
 		//	.catch(console.error);
 	}, []);
 
-	useEffect(() => {
-		function updateCurrentLocation(data) {
-			const { metadata } = data;
-			if (metadata.coordinates?.length > 0) {
-				const lastCoord = metadata.coordinates[metadata.coordinates.length - 1];
-				console.debug(lastCoord);
-				setLastGPS({ coordinates: [lastCoord.lat, lastCoord.lon] });
-			}
-		}
-
-		Mercure.addMessageListener("App\\Events\\TrackerMetadataUpdated", updateCurrentLocation);
-
-		return () => {
-			Mercure.removeMessageListener(updateCurrentLocation);
-		};
-	}, [state !== "init"]);
-
 	/*
-	 |------------------
-	 | Render
-	 |------------------
+	 | ************************
+	 | Events handlers
+	 | ************************
 	 */
 
-	const path = useMemo(() => {
-		return (
-			context.path?.map((coord) => {
-				const [lon, lat] = coord.location.coordinates;
-				return [lat, lon];
-			}) || []
-		);
-	}, [context.path]);
+	function handleCreated(m) {
+		map.current = m;
+		m.on("dragstart", () => setAutoPan(false));
+	}
+
+	useEffect(() => {
+		if (!autoPan || !map.current) {
+			return;
+		}
+		const coords = arrLast(lastMetadata?.coordinates || []);
+
+		if (!coords) {
+			return;
+		}
+
+		map.current.panTo(coords);
+	}, [autoPan, lastMetadata]);
+
+	useEffect(() => {
+		function updateTraceCoordinates(data) {
+			dispatch(addCoordinates(data?.coordinates || []));
+		}
+
+		Mercure.addMessageListener("App\\Events\\TraceCoordinatesUpdated", updateTraceCoordinates);
+		return () => Mercure.removeMessageListener(updateTraceCoordinates);
+	}, [trace?.uid]);
+
+	/*
+	 | ************************
+	 | Render
+	 | ************************
+	 */
 	const stats = useMemo(() => {
-		const p = Math.PI / 180; // Math.PI / 180
-
-		function calcDistance([lat1, lon1], [lat2, lon2]) {
-			const a =
-				0.5 -
-				Math.cos((lat2 - lat1) * p) / 2 +
-				(Math.cos(lat1 * p) * Math.cos(lat2 * p) * (1 - Math.cos((lon2 - lon1) * p))) / 2;
-			return 12742000 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
-		}
-
-		let i = 0,
-			m = path.length,
-			distance = 0;
-
-		if (path.length >= 2) {
-			for (; i < m - 1; i++) {
-				distance += calcDistance(path[i], path[i + 1]);
-			}
-		}
+		//let i = 0,
+		//	m = path.length,
+		//	distance = 0;
+		//
+		//if (path.length >= 2) {
+		//	for (; i < m - 1; i++) {
+		//		distance += calcDistance(path[i], path[i + 1]);
+		//	}
+		//}
 
 		return {
-			distance,
+			distance: 0,
 		};
-	}, [path]);
+	}, []);
 
 	return (
 		<Layout>
 			<div className={styles.viewport}>
 				<div className={styles.overlay}>
+					{/*
+					 | ************************
+					 | Header
+					 | ************************
+					 */}
 					<div className={styles.overlayHeader}>
-						{(can("startTracking") || isState("preRecording")) && (
-							<ActionButton type="primary" onClick={() => send("startTracking")} loading={isState("preRecording")}>
-								{isState("preRecording") ? "Starting..." : "Start tracking"}
+						{isTrackerOnline && !isTracking && (
+							<ActionButton type="primary" onClick={startTrace} loading={loading}>
+								Start tracking
 							</ActionButton>
 						)}
-						{(can("stopTracking") || isState("postRecording")) && (
-							<ActionButton type="danger" onClick={() => send("stopTracking")} loading={isState("postRecording")}>
-								{isState("postRecording") ? "Stopping..." : "Stop tracking"}
+						{isTracking && (
+							<ActionButton type="danger" onClick={stopTrace} loading={loading}>
+								Stop tracking
 							</ActionButton>
 						)}
 					</div>
-					<div className={styles.overlayBody} />
+
+					{/*
+					 | ************************
+					 | Body
+					 | ************************
+					 */}
+					<div className={styles.overlayBody}>
+						<div className="m-2 bg-white p-1 text-xs rounded inline-block">
+							sats: {lastMetadata?.satellites?.active}&nbsp;({lastMetadata?.satellites?.visible})
+						</div>
+					</div>
+
+					{/*
+					 | ************************
+					 | Footer
+					 | ************************
+					 */}
 					<div className={clsx(styles.overlayFooter, "pb-16")}>
-						{isState("waitLocation") && (
+						{isTrackerOnline && !hasMetadata && (
 							<Display className="px-4 flex items-center justify-center text-slate-400">
 								<span className="animate-spin text-2xl">🕛</span> Waiting GPS...
 							</Display>
 						)}
 
-						{isState("offline") && (
+						{!isTrackerOnline && (
 							<Display className="px-4 flex items-center justify-center text-slate-400">Tracker offline</Display>
 						)}
 
-						{hasDataToDisplay > 0 && (
+						{hasTrace && (
 							<Display className="px-4 flex items-center">
 								<Timer start={trace.started_at} end={trace.finished_at} />
 								<br />
@@ -127,17 +189,20 @@ export function LivePage() {
 						)}
 					</div>
 				</div>
+
 				<MapContainer
 					zoomControl={false}
 					attributionControl={false}
 					className="h-full z-0"
 					center={[48.81602, 2.30063]}
 					zoom={19}
-					whenCreated={(m) => (map.current = m)}
+					whenCreated={handleCreated}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
-					{lastGPS && <Circle center={lastGPS.coordinates} radius={(lastGPS.precision || 2) * 2.5} color="#fb923c" />}
-					{path.length > 0 && <Polyline positions={path} color="#fb923c" />}
+					{Object.entries(trackersMetadata).map(([uid, meta]) => (
+						<Circle key={uid} center={arrLast(meta.coordinates)} radius={5} color="#fb923c" />
+					))}
+					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
 			</div>
 		</Layout>

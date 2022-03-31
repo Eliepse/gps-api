@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property-read ?float $precision
  * @property-read ?object[] $coordinates
  * @property-read ?object[] $satellites
- * @property-read ?int $trace_id
  */
 class UpdateTrackerRequest extends FormRequest
 {

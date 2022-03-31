@@ -33,6 +33,9 @@ export const slice = createSlice({
 
 export const getTrackers = (state) => state.trackers.trackers;
 export const getTrackerMetadata = (uid) => (state) => state.trackers.metadata[uid] || emptyObj;
+export const hasOnlineTracker = (state) => {
+	return Object.values(state.trackers.trackers).some((tracker) => tracker.active === true);
+};
 
 // Action creators are generated for each case reducer function
 export const {

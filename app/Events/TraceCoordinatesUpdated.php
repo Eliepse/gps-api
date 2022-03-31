@@ -26,7 +26,7 @@ class TraceCoordinatesUpdated implements ShouldBroadcast
 	 */
 	public function __construct(private Trace $trace, Collection $coordinates)
 	{
-		$this->coordinates = $coordinates->map(fn(Coordinate $coordinate) => $coordinate->toArray());
+		$this->coordinates = $coordinates->map(fn(Coordinate $coordinate) => $coordinate->getLatLng());
 	}
 
 
