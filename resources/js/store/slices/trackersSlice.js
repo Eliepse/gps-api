@@ -22,14 +22,9 @@ export const slice = createSlice({
 			//state.trackers = state.trackers.filter((tracker) => tracker.payload.id !== action.payload.id);
 		},
 		updateMetadata: (state, action) => {
-			const { tracker, coordinate, activeSatellitesCount, visibleSatellitesCount } = action.payload;
-
-			if (!tracker?.uid) {
-				return;
-			}
-
-			state.metadata[action.payload.tracker.uid] = {
-				coordinate,
+			const { activeSatellitesCount, visibleSatellitesCount } = action.payload;
+			state.metadata[action.payload.tracker_uid] = {
+				coordinate: action.payload.coordinate,
 				satellites: { active: activeSatellitesCount, visible: visibleSatellitesCount },
 			};
 		},

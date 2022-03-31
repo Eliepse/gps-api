@@ -13,10 +13,14 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
+	private string $tracker_uid;
+
 	/** @var int[] array */
 	public array $coordinate;
-	public int $activeSatellitesCount;
-	public int $visibleSatellitesCount;
+
+	public int $activeSatellitesCount = 0;
+
+	public int $visibleSatellitesCount = 0;
 
 
 	/**
@@ -24,9 +28,11 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 	 *
 	 * @return void
 	 */
-	public function __construct(public Tracker $tracker, private array $metadata)
+	public function __construct(private Tracker $tracker, private array $metadata)
 	{
 		$last = array_slice($metadata["coordinates"], -1)[0];
+
+		$this->tracker_uid = $this->tracker->uid;
 
 		if (isset($last["lat"], $last["lon"])) {
 			$this->coordinate = [$last["lat"], $last["lon"]];
