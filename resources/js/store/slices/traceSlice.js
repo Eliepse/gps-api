@@ -7,6 +7,10 @@ export const slice = createSlice({
 	initialState,
 	reducers: {
 		hydrate: (state, action) => {
+			if (!action.payload) {
+				return;
+			}
+
 			return {
 				...action.payload,
 				coordinates: action.payload.coordinates || [],

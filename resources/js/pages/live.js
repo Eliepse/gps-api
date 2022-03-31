@@ -92,13 +92,12 @@ export function LivePage() {
 		if (!autoPan || !map.current) {
 			return;
 		}
-		const coords = arrLast(lastMetadata?.coordinates || []);
 
-		if (!coords) {
+		if (!lastMetadata?.coordinate) {
 			return;
 		}
 
-		map.current.panTo(coords);
+		map.current.panTo(lastMetadata?.coordinate || []);
 	}, [autoPan, lastMetadata]);
 
 	useEffect(() => {
@@ -200,7 +199,7 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						<Circle key={uid} center={arrLast(meta.coordinates)} radius={5} color="#fb923c" />
+						<Circle key={uid} center={meta.coordinate} radius={5} color="#fb923c" />
 					))}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
