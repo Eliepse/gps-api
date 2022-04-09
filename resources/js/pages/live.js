@@ -24,7 +24,7 @@ export function LivePage() {
 	const lastMetadata = arrLast(Object.values(trackersMetadata));
 
 	const hasTrace = Boolean(trace);
-	const isTracking = trace?.started_at && !trace?.ended_at;
+	const isTracking = trace?.started_at && !trace?.finished_at;
 	const hasMetadata = Boolean(lastMetadata);
 
 	/*
@@ -199,7 +199,7 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						<Circle key={uid} center={meta.coordinate} radius={5} color="#fb923c" />
+						<Circle key={uid} center={meta.coordinate} radius={15} color="#fb923c" />
 					))}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
