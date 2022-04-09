@@ -2,6 +2,9 @@
 
 namespace App\Notifications\tracker;
 
+use App\Models\MercureSubscriberInterface;
+use App\Notifications\MercureNotificationChannel;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 
 class StopTrackerNotification extends Notification
@@ -20,13 +23,13 @@ class StopTrackerNotification extends Notification
 	/**
 	 * Get the notification's delivery channels.
 	 *
-	 * @param mixed $notifiable
+	 * @param MercureSubscriberInterface|Notifiable $notifiable
 	 *
 	 * @return array
 	 */
 	public function via($notifiable)
 	{
-		return ['broadcast'];
+		return [MercureNotificationChannel::class];
 	}
 
 

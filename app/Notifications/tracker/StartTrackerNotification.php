@@ -3,6 +3,7 @@
 namespace App\Notifications\tracker;
 
 use App\Models\Trace;
+use App\Notifications\MercureNotificationChannel;
 use Illuminate\Notifications\Notification;
 
 class StartTrackerNotification extends Notification
@@ -29,7 +30,7 @@ class StartTrackerNotification extends Notification
 	 */
 	public function via($notifiable)
 	{
-		return ['broadcast'];
+		return [MercureNotificationChannel::class];
 	}
 
 
