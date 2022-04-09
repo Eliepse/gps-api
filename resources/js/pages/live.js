@@ -25,7 +25,7 @@ export function LivePage() {
 
 	const hasTrace = Boolean(trace);
 	const isTracking = trace?.status === "recording";
-	const hasMetadata = Boolean(lastMetadata);
+	const isWaitingGPSUpdate = isTrackerOnline && !lastMetadata;
 
 	/*
 	 | ************************
@@ -169,18 +169,12 @@ export function LivePage() {
 					 | ************************
 					 */}
 					<div className={clsx(styles.overlayFooter, "pb-16")}>
-						{isTrackerOnline && !hasMetadata && (
-							<Display className="px-4 flex items-center justify-center text-slate-400">
-								<span className="animate-spin text-2xl">🕛</span> Waiting GPS...
-							</Display>
-						)}
-
 						{!isTrackerOnline && (
 							<Display className="px-4 flex items-center justify-center text-slate-400">Tracker offline</Display>
 						)}
 
 						{hasTrace && (
-							<Display className="px-4 flex items-center">
+							<Display signalLost={isWaitingGPSUpdate} className="px-4 flex items-center">
 								<Timer start={trace.started_at} end={trace.finished_at} />
 								<br />
 								{(stats.distance / 1000).toFixed(3)} km
@@ -208,8 +202,8 @@ export function LivePage() {
 	);
 }
 
-const Display = ({ className, ...rest }) => {
-	return <div className={clsx(styles.display, className)} {...rest} />;
+const Display = ({ signalLost = false, className, ...rest }) => {
+	return <div className={clsx(styles.display, signalLost && styles.noSignal, className)} {...rest} />;
 };
 
 const TYPES_CLASSES = {

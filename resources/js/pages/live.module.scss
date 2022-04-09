@@ -30,6 +30,20 @@
 	min-height: 3rem;
 }
 
+.display.noSignal {
+	@apply border-2;
+	animation: noSignal 750ms ease-in-out alternate infinite;
+}
+
+@keyframes noSignal {
+	from {
+		@apply border-blue-50;
+	}
+	to {
+		@apply border-blue-500;
+	}
+}
+
 .actionBtn {
 	@apply px-4 py-2;
 	@apply rounded-full bg-white text-slate-700 text-lg cursor-pointer;
