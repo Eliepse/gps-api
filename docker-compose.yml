@@ -1,6 +1,5 @@
 version: '3.7'
 
-
 services:
   mercure:
     image: dunglas/mercure
@@ -19,7 +18,7 @@ services:
         ui
     command: caddy run -config /etc/caddy/Caddyfile.dev
     ports:
-      - "8080:80"
+      - "8001:80"
       - "4433:443"
     volumes:
       - mercure_data:/data
