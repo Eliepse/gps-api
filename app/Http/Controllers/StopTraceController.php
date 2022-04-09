@@ -38,6 +38,7 @@ class StopTraceController extends \Illuminate\Routing\Controller
 			"uid" => $trace->uid,
 			"started_at" => $trace->started_at,
 			"finished_at" => $trace->finished_at,
+			"status" => $trace->status,
 		];
 	}
 }

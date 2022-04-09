@@ -7,7 +7,7 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import { api } from "lib/api/axios";
 import { arrLast, emptyArray } from "lib/supports/array";
-import { addCoordinates, hydrateTrace } from "store/slices/traceSlice";
+import { addCoordinates, startTrace as startTraceSlice, stopTrace as stopTraceSlice } from "store/slices/traceSlice";
 import { hasOnlineTracker } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
 
@@ -24,7 +24,7 @@ export function LivePage() {
 	const lastMetadata = arrLast(Object.values(trackersMetadata));
 
 	const hasTrace = Boolean(trace);
-	const isTracking = trace?.started_at && !trace?.finished_at;
+	const isTracking = trace?.status === "recording";
 	const hasMetadata = Boolean(lastMetadata);
 
 	/*
@@ -43,7 +43,7 @@ export function LivePage() {
 
 		api
 			.post("/trace", { tracker_uid: trackersArray[0].uid })
-			.then(({ data }) => dispatch(hydrateTrace(data)))
+			.then(({ data }) => dispatch(startTraceSlice(data)))
 			.catch(console.error)
 			.finally(() => setLoading(false));
 	}
@@ -57,7 +57,7 @@ export function LivePage() {
 
 		api
 			.post(`/trace/${trace.uid}/stop`)
-			.then(({ data }) => dispatch(hydrateTrace(data)))
+			.then(({ data }) => dispatch(stopTraceSlice(data)))
 			.catch(console.error)
 			.finally(() => setLoading(false));
 	}
