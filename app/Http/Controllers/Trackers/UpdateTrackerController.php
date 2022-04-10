@@ -37,8 +37,8 @@ class UpdateTrackerController extends Controller
 		}
 
 
-		$coordinates = collect($request->coordinates)->map(function ($coord) use ($trace) {
-			$coordinate = Coordinate::newFromTrackerTraceCoordinates($coord);
+		$coordinates = collect($request->coordinates)->map(function ($coordData) use ($trace) {
+			$coordinate = Coordinate::newFromTrackerTraceCoordinates($coordData);
 			$coordinate->trace_id = $trace->id;
 			return $coordinate;
 		});

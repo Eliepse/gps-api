@@ -22,6 +22,8 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 
 	public int $visibleSatellitesCount = 0;
 
+	public float $precision;
+
 
 	/**
 	 * Create a new event instance.
@@ -30,18 +32,20 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 	 */
 	public function __construct(private Tracker $tracker, private array $metadata)
 	{
-		$last = array_slice($metadata["coordinates"], -1)[0];
+		$lastCoord = array_slice($metadata["coordinates"], -1)[0];
 
 		$this->tracker_uid = $this->tracker->uid;
 
-		if (isset($last["lat"], $last["lon"])) {
-			$this->coordinate = [$last["lat"], $last["lon"]];
+		if (isset($lastCoord["lat"], $lastCoord["lon"])) {
+			$this->coordinate = [$lastCoord["lat"], $lastCoord["lon"]];
 		}
 
-		if (isset($last["satellites"])) {
-			$this->activeSatellitesCount = count($last["satellites"]["active"] ?? 0);
-			$this->visibleSatellitesCount = count($last["satellites"]["visible"] ?? 0);
+		if (isset($lastCoord["satellites"])) {
+			$this->activeSatellitesCount = count($lastCoord["satellites"]["active"] ?? 0);
+			$this->visibleSatellitesCount = count($lastCoord["satellites"]["visible"] ?? 0);
 		}
+
+		$this->precision = $lastCoord["precision"] ?? null;
 	}
 
 

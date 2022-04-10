@@ -26,6 +26,7 @@ export const slice = createSlice({
 			state.metadata[action.payload.tracker_uid] = {
 				coordinate: action.payload.coordinate,
 				satellites: { active: activeSatellitesCount, visible: visibleSatellitesCount },
+				precision: action.payload.precision || 25,
 			};
 		},
 	},
