@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Trackers;
 
+use App\Actions\UpdateTraceLength;
 use App\Enums\TraceStatus;
 use App\Events\TraceCoordinatesUpdated;
 use App\Events\TrackerMetadataUpdated;
@@ -35,6 +36,7 @@ class UpdateTrackerController extends Controller
 			return response()->noContent();
 		}
 
+
 		$coordinates = collect($request->coordinates)->map(function ($coord) use ($trace) {
 			$coordinate = Coordinate::newFromTrackerTraceCoordinates($coord);
 			$coordinate->trace_id = $trace->id;
@@ -43,7 +45,12 @@ class UpdateTrackerController extends Controller
 
 		$trace->coordinates()->insertOrIgnore($coordinates->map(fn($coord) => $coord->toInsertQueryArray())->toArray());
 
-//		Maybe not usefull as TrackerMetadataUpdated is already fired with coordinates
+		// Update length
+		(new UpdateTraceLength())($trace);
+
+		$trace->refresh();
+
+		// Maybe not usefull as TrackerMetadataUpdated is already fired with coordinates
 		TraceCoordinatesUpdated::dispatch($trace, $coordinates);
 
 		return response()->noContent();

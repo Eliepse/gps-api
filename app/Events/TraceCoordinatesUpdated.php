@@ -16,6 +16,7 @@ class TraceCoordinatesUpdated implements ShouldBroadcast
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
 	public Collection $coordinates;
+	public float $length;
 
 
 	/**
@@ -27,6 +28,7 @@ class TraceCoordinatesUpdated implements ShouldBroadcast
 	public function __construct(private Trace $trace, Collection $coordinates)
 	{
 		$this->coordinates = $coordinates->map(fn(Coordinate $coordinate) => $coordinate->getLatLng());
+		$this->length = $this->trace->length;
 	}
 
 

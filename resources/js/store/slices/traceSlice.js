@@ -33,10 +33,13 @@ export const slice = createSlice({
 		addCoordinates: (state, action) => {
 			state.coordinates = [...state.coordinates, ...action.payload];
 		},
+		updateLength: (state, action) => {
+			state.length = action.payload;
+		},
 	},
 });
 
 // Action creators are generated for each case reducer function
-export const { hydrate: hydrateTrace, start: startTrace, stop: stopTrace, addCoordinates } = slice.actions;
+export const { hydrate: hydrateTrace, start: startTrace, stop: stopTrace, addCoordinates, updateLength } = slice.actions;
 
 export default slice.reducer;

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read int $id
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $user_id
  * @property int $tracker_id
  * @property TraceStatus $status
+ * @property float $length
  * @property Carbon $started_at
  * @property Carbon $finished_at
  * @property Carbon $created_at
@@ -28,7 +30,7 @@ class Trace extends Model
 {
 	use HasFactory;
 
-	protected $fillable = ["uid", "status", "tracker_id", "started_at"];
+	protected $fillable = ["uid", "status", "length", "tracker_id", "started_at"];
 
 	protected $casts = [
 		"status" => TraceStatus::class,

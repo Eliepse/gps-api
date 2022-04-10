@@ -2,12 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "components/layout/layout";
 import { Circle, MapContainer, Polyline, TileLayer } from "react-leaflet";
 import styles from "./live.module.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { batch, useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { api } from "lib/api/axios";
 import { arrLast, emptyArray } from "lib/supports/array";
-import { addCoordinates, startTrace as startTraceSlice, stopTrace as stopTraceSlice } from "store/slices/traceSlice";
+import {
+	addCoordinates,
+	startTrace as startTraceSlice,
+	stopTrace as stopTraceSlice,
+	updateLength
+} from "store/slices/traceSlice";
 import { hasOnlineTracker } from "store/slices/trackersSlice";
 import { Mercure } from "lib/EventSourceManager";
 
@@ -102,7 +107,10 @@ export function LivePage() {
 
 	useEffect(() => {
 		function updateTraceCoordinates(data) {
-			dispatch(addCoordinates(data?.coordinates || []));
+			batch(() => {
+				dispatch(addCoordinates(data?.coordinates || []));
+				dispatch(updateLength(data.length));
+			})
 		}
 
 		Mercure.addMessageListener("App\\Events\\TraceCoordinatesUpdated", updateTraceCoordinates);
@@ -177,7 +185,7 @@ export function LivePage() {
 							<Display signalLost={isWaitingGPSUpdate} className="px-4 flex items-center">
 								<Timer start={trace.started_at} end={trace.finished_at} />
 								<br />
-								{(stats.distance / 1000).toFixed(3)} km
+								{(trace.length / 1000).toFixed(3)} km
 							</Display>
 						)}
 					</div>
