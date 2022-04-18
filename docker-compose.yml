@@ -6,11 +6,11 @@ services:
     restart: unless-stopped
     environment:
       DEBUG: 1
-      SERVER_NAME: "localhost:80"
+      SERVER_NAME: "192.168.1.35:80"
       MERCURE_PUBLISHER_JWT_KEY: "!ChangeMe!"
       MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeMe!"
       MERCURE_EXTRA_DIRECTIVES: |-
-        cors_origins http://localhost:8000 https://localhost:8000
+        cors_origins http://localhost:8000 https://localhost:8000 http://192.168.1.35:8000
         publish_origins *
         subscriptions
         heartbeat 15s
