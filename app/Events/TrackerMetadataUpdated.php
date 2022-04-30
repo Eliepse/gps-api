@@ -32,7 +32,7 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 	 */
 	public function __construct(private Tracker $tracker, private array $metadata)
 	{
-		$lastCoord = array_slice($metadata["coordinates"], -1)[0];
+		$lastCoord = array_slice($metadata["coordinates"], -1)[0] ?? [];
 
 		$this->tracker_uid = $this->tracker->uid;
 
