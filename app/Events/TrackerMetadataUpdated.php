@@ -16,7 +16,7 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 	private string $tracker_uid;
 
 	/** @var int[] array */
-	public array $coordinate;
+	public array $coordinate = [];
 
 	public int $activeSatellitesCount = 0;
 
