@@ -201,7 +201,7 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						<Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
+						meta?.coordinate && <Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
 					))}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
