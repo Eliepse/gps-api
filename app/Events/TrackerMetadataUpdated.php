@@ -22,7 +22,7 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 
 	public int $visibleSatellitesCount = 0;
 
-	public float $precision;
+	public ?float $precision;
 
 
 	/**
