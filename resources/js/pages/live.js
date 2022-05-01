@@ -167,7 +167,7 @@ export function LivePage() {
 					 */}
 					<div className={styles.overlayBody}>
 						<div className="m-2 bg-white p-1 text-xs rounded inline-block">
-							sats: {lastMetadata?.satellites?.active}&nbsp;({lastMetadata?.satellites?.visible})
+							sats: {lastMetadata?.activeSatellitesCount}&nbsp;({lastMetadata?.visibleSatellitesCount})
 						</div>
 					</div>
 
