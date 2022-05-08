@@ -110,7 +110,7 @@ export function LivePage() {
 			batch(() => {
 				dispatch(addCoordinates(data?.coordinates || []));
 				dispatch(updateLength(data.length));
-			})
+			});
 		}
 
 		Mercure.addMessageListener("App\\Events\\TraceCoordinatesUpdated", updateTraceCoordinates);
@@ -134,7 +134,7 @@ export function LivePage() {
 		//}
 
 		return {
-			distance: 0,
+			distance: 0
 		};
 	}, []);
 
@@ -167,7 +167,9 @@ export function LivePage() {
 					 */}
 					<div className={styles.overlayBody}>
 						<div className="m-2 bg-white p-1 text-xs rounded inline-block">
-							sats: {lastMetadata?.satellites?.active}&nbsp;({lastMetadata?.satellites?.visible})
+							{Object.values(trackersMetadata).map(({ satellites }) => (
+								<>satellites: {satellites?.active}&nbsp;({satellites?.visible})<br /></>
+							))}
 						</div>
 					</div>
 
@@ -201,7 +203,8 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						meta?.coordinate && meta?.coordinate?.length > 0 && <Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
+						meta?.coordinate && meta?.coordinate?.length > 0 &&
+						<Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
 					))}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
@@ -216,7 +219,7 @@ const Display = ({ signalLost = false, className, ...rest }) => {
 
 const TYPES_CLASSES = {
 	primary: styles.primary,
-	danger: styles.danger,
+	danger: styles.danger
 };
 
 const ActionButton = ({ type, loading = false, className, ...rest }) => {
