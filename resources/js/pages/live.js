@@ -98,11 +98,11 @@ export function LivePage() {
 			return;
 		}
 
-		if (!lastMetadata?.coordinate) {
+		if (!lastMetadata?.coordinate || lastMetadata.coordinate.length !== 2) {
 			return;
 		}
 
-		map.current.panTo(lastMetadata?.coordinate || []);
+		map.current.panTo(lastMetadata.coordinate);
 	}, [autoPan, lastMetadata]);
 
 	useEffect(() => {
@@ -203,7 +203,7 @@ export function LivePage() {
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						meta?.coordinate && meta?.coordinate?.length > 0 &&
+						meta?.coordinate?.length === 2 &&
 						<Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
 					))}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}

@@ -24,7 +24,7 @@ export const slice = createSlice({
 		updateMetadata: (state, action) => {
 			const { activeSatellitesCount, visibleSatellitesCount } = action.payload;
 			state.metadata[action.payload.tracker_uid] = {
-				coordinate: action.payload.coordinate,
+				coordinate: action.payload.coordinate?.length === 2 ? action.payload.coordinate : [],
 				satellites: { active: activeSatellitesCount, visible: visibleSatellitesCount },
 				precision: action.payload.precision || 25,
 			};
