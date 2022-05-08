@@ -13,7 +13,7 @@ class TrackerMetadataUpdated implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
-	private string $tracker_uid;
+	public string $tracker_uid;
 
 	/** @var int[] array */
 	public array $coordinate = [];
