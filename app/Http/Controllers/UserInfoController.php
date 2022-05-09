@@ -34,14 +34,10 @@ class UserInfoController extends Controller
 		/** @var Trace $activeTrace */
 		$activeTrace = $user->traces()->where("status", TraceStatus::Recording)->orderByDesc("id")->first();
 
-		$totalTravelled = DB::table("traces")->where("user_id", $user->id)->sum("length");
 
 		if ($activeTrace) {
 			return [
 				"user" => $user,
-				"stats" => [
-					"totalTravelled" => $totalTravelled,
-				],
 				"trackers" => $trackers,
 				"trace" => [
 					...$activeTrace->toArray(),
@@ -50,6 +46,12 @@ class UserInfoController extends Controller
 			];
 		}
 
-		return ["user" => $user, "trackers" => $trackers];
+		$totalTravelled = DB::table("traces")->where("user_id", $user->id)->sum("length");
+
+		return ["user" => array_merge($user->toArray(), [
+			"stats" => [
+				"totalTravelled" => $totalTravelled,
+			],
+		]), "trackers" => $trackers];
 	}
 }
