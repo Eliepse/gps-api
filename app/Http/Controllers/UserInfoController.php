@@ -11,6 +11,7 @@ use App\Models\Tracker;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class UserInfoController extends Controller
 {
@@ -33,9 +34,14 @@ class UserInfoController extends Controller
 		/** @var Trace $activeTrace */
 		$activeTrace = $user->traces()->where("status", TraceStatus::Recording)->orderByDesc("id")->first();
 
+		$totalTravelled = DB::table("traces")->sum("length");
+
 		if ($activeTrace) {
 			return [
 				"user" => $user,
+				"stats" => [
+					"totalTravelled" => $totalTravelled,
+				],
 				"trackers" => $trackers,
 				"trace" => [
 					...$activeTrace->toArray(),
