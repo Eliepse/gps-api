@@ -34,7 +34,7 @@ class UserInfoController extends Controller
 		/** @var Trace $activeTrace */
 		$activeTrace = $user->traces()->where("status", TraceStatus::Recording)->orderByDesc("id")->first();
 
-		$totalTravelled = DB::table("traces")->sum("length");
+		$totalTravelled = DB::table("traces")->where("user_id", $user->id)->sum("length");
 
 		if ($activeTrace) {
 			return [
