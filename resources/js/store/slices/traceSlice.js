@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { calcSpeed, msToKmh } from "lib/supports/number";
+import dayjs from "dayjs";
 
 const initialState = null;
 
@@ -13,7 +15,7 @@ export const slice = createSlice({
 
 			return {
 				...action.payload,
-				coordinates: action.payload.coordinates || state.coordinates || [],
+				coordinates: action.payload.coordinates || state.coordinates || []
 			};
 		},
 		start: (state, action) => {
@@ -28,6 +30,12 @@ export const slice = createSlice({
 				return;
 			}
 
+			// Update average speed
+			if (state.started_at && state.length > 0) {
+				const duration = dayjs.duration(dayjs(state.finished_at).diff(state.started_at)).asSeconds();
+				state.averageSpeed = msToKmh(calcSpeed(state.length, duration));
+			}
+
 			return { ...state, ...action.payload };
 		},
 		addCoordinates: (state, action) => {
@@ -35,11 +43,23 @@ export const slice = createSlice({
 		},
 		updateLength: (state, action) => {
 			state.length = action.payload;
-		},
-	},
+
+			// Update average speed
+			if (state.started_at && action.payload > 0) {
+				const duration = dayjs.duration(dayjs(state.finished_at).diff(state.started_at)).asSeconds();
+				state.averageSpeed = msToKmh(calcSpeed(action.payload, duration));
+			}
+		}
+	}
 });
 
 // Action creators are generated for each case reducer function
-export const { hydrate: hydrateTrace, start: startTrace, stop: stopTrace, addCoordinates, updateLength } = slice.actions;
+export const {
+	hydrate: hydrateTrace,
+	start: startTrace,
+	stop: stopTrace,
+	addCoordinates,
+	updateLength
+} = slice.actions;
 
 export default slice.reducer;

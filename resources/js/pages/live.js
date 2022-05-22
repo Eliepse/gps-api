@@ -188,6 +188,8 @@ export function LivePage() {
 								<Timer start={trace.started_at} end={trace.finished_at} />
 								<br />
 								{(trace.length / 1000).toFixed(3)} km
+								<br />
+								{trace.averageSpeed && `${trace.averageSpeed} km/s`}
 							</Display>
 						)}
 					</div>
