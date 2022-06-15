@@ -27,7 +27,11 @@ class CreateTraceRequest extends FormRequest
 
 	protected function passedValidation()
 	{
-		$this->tracker = $this->user()->trackers()->where("uid", $this->tracker_uid)->first();
+		if (! $this->user()->tracker || $this->user()->tracker !== $this->tracker_uid) {
+			$this->tracker = null;
+		}
+
+		$this->tracker = $this->user()->tracker;
 	}
 
 
