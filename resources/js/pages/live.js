@@ -24,7 +24,7 @@ export function LivePage() {
 
 	const tracker = useSelector(getTracker);
 	const trackerMetadata = useSelector(getTrackerMetadata);
-	const isTrackerOnline = tracker.active;
+	const isTrackerOnline = tracker?.active;
 	const trace = useSelector((state) => state.trace);
 
 	const hasTrace = Boolean(trace);
@@ -134,9 +134,6 @@ export function LivePage() {
 					 | ************************
 					 */}
 					<div className={styles.overlayBody}>
-						<div className="m-2 bg-white p-1 text-xs rounded inline-block">
-							satellites: {trackerMetadata.satellites?.active}&nbsp;({trackerMetadata.satellites?.visible})
-						</div>
 					</div>
 
 					{/*
@@ -158,6 +155,17 @@ export function LivePage() {
 								{trace.averageSpeed && `${trace.averageSpeed} km/s`}
 							</Display>
 						)}
+
+						<Display className="px-4 flex items-center justify-center text-slate-400 mt-4">
+							<span className="mr-2">
+								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+									<path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
+								</svg>
+							</span>
+							{trackerMetadata.satellites ? (
+								<span>{trackerMetadata.satellites?.active}&nbsp;({trackerMetadata.satellites?.visible})</span>
+							) : "---"}
+						</Display>
 					</div>
 				</div>
 
@@ -170,7 +178,9 @@ export function LivePage() {
 					whenCreated={handleCreated}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
-					<Circle center={trackerMetadata.coordinate} radius={trackerMetadata.precision * 2.5} color="#fb923c" />
+					{trackerMetadata?.coordinate?.length === 2 && (
+						<Circle center={trackerMetadata.coordinate} radius={(trackerMetadata?.precision || 4) * 2.5} color="#fb923c" />
+					)}
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
 			</div>
