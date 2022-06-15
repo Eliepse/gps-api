@@ -20,7 +20,7 @@ export const Root = () => {
 				batch(() => {
 					const { id } = res.data.user;
 					dispatch(hydrateUser(res.data.user));
-					dispatch(hydrateTrackers(res.data.trackers));
+					dispatch(hydrateTrackers(res.data.tracker));
 					dispatch(hydrateTrace(res.data.trace));
 					Mercure.topics = [
 						`/user/${id}`,
