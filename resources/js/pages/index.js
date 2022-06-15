@@ -1,12 +1,12 @@
 import Layout from "components/layout/layout";
 import { useSelector } from "react-redux";
-import { getTrackers } from "store/slices/trackersSlice";
+import { getTracker, getTrackerMetadata } from "store/slices/trackerSlice";
 import clsx from "clsx";
 
 export function IndexPage() {
 	const user = useSelector((state) => state.user);
-	const trackers = useSelector(getTrackers);
-	const metadata = useSelector(({ trackers }) => trackers.metadata);
+	const tracker = useSelector(getTracker);
+	const metadata = useSelector(getTrackerMetadata);
 
 	return (
 		<Layout>
@@ -14,7 +14,7 @@ export function IndexPage() {
 				<h2 className="text-lg mb-8">Trackers</h2>
 
 				<p>
-					Total distance travelled: {(user?.stats?.totalTravelled / 1000).toFixed(2) || "/"} km
+					Total distance travelled: {user?.stats?.totalTravelled ? (user?.stats?.totalTravelled / 1000).toFixed(2) : "/"} km
 				</p>
 
 				<table>
@@ -26,20 +26,18 @@ export function IndexPage() {
 					</tr>
 					</thead>
 					<tbody>
-					{Object.values(trackers).map((tracker) => (
-						<tr className={clsx(!tracker.active && "text-gray-400")} key={tracker.uid}>
-							<td>{tracker.name}</td>
-							<td className="pl-4 ">{tracker.active ? "Connected" : "offline"}</td>
-							<td className="pl-4 ">
-								{tracker.active ? (
-									<>
-										<span>{metadata[tracker.uid]?.satellites?.active}</span>
-										<span>({metadata[tracker.uid]?.satellites?.visible})</span>
-									</>
-								) : null}
-							</td>
-						</tr>
-					))}
+					<tr className={clsx(!tracker.active && "text-gray-400")} key={tracker.uid}>
+						<td>{tracker.name}</td>
+						<td className="pl-4 ">{tracker.active ? "Connected" : "offline"}</td>
+						<td className="pl-4 ">
+							{tracker.active ? (
+								<>
+									<span>{metadata?.satellites?.active}</span>
+									<span>({metadata?.satellites?.visible})</span>
+								</>
+							) : null}
+						</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>

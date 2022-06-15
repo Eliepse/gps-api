@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { hydrateUser } from "store/slices/userSlice";
 import { api } from "lib/api/axios";
-import { connectTracker, disconnectTracker, hydrateTrackers, updateTrackerMetadata } from "store/slices/trackersSlice";
+import { connectTracker, disconnectTracker, hydrateTrackers, updateTrackerMetadata } from "store/slices/trackerSlice";
 import { Mercure } from "lib/EventSourceManager";
 import { hydrateTrace } from "store/slices/traceSlice";
 

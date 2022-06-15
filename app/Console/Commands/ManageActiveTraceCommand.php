@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Enums\TraceStatus;
-use App\Enums\TrackerStatus;
 use App\Models\Trace;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -68,18 +67,12 @@ class ManageActiveTraceCommand extends Command
 			return 0;
 		}
 
-		$trackers = $user->trackers()
-			->where("registered", true)
-			->whereNotIn("status", [TrackerStatus::Banned->value])
-			->get(["id", "name"]);
+		$tracker = $user->tracker;
 
-		if ($trackers->count() === 0) {
+		if ($tracker->isBanned() || $tracker->registered) {
 			$this->error("This user does not have any tracker available.");
 			return 1;
 		}
-
-		$trackerTitle = $this->choice("Which tracker?", $trackers->keyBy("id")->map(fn($t) => "$t->name ($t->id)")->toArray());
-		$tracker = $trackers[intval(explode(" (", $trackerTitle)[0])];
 
 		$trace = $user->traces()->make([
 			"uid" => Str::uuid()->toString(),

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "components/layout/layout";
 import { Circle, MapContainer, Polyline, TileLayer } from "react-leaflet";
 import styles from "./live.module.scss";
@@ -6,14 +6,14 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { api } from "lib/api/axios";
-import { arrLast, emptyArray } from "lib/supports/array";
+import { emptyArray } from "lib/supports/array";
 import {
 	addCoordinates,
 	startTrace as startTraceSlice,
 	stopTrace as stopTraceSlice,
 	updateLength
 } from "store/slices/traceSlice";
-import { hasOnlineTracker } from "store/slices/trackersSlice";
+import { getTracker, getTrackerMetadata } from "store/slices/trackerSlice";
 import { Mercure } from "lib/EventSourceManager";
 
 export function LivePage() {
@@ -22,15 +22,14 @@ export function LivePage() {
 	const [loading, setLoading] = useState(false);
 	const [autoPan, setAutoPan] = useState(true);
 
-	const trackers = useSelector((state) => state.trackers.trackers);
-	const trackersMetadata = useSelector((state) => state.trackers.metadata);
-	const isTrackerOnline = useSelector(hasOnlineTracker);
+	const tracker = useSelector(getTracker);
+	const trackerMetadata = useSelector(getTrackerMetadata);
+	const isTrackerOnline = tracker.active;
 	const trace = useSelector((state) => state.trace);
-	const lastMetadata = arrLast(Object.values(trackersMetadata));
 
 	const hasTrace = Boolean(trace);
 	const isTracking = trace?.status === "recording";
-	const isWaitingGPSUpdate = isTrackerOnline && !lastMetadata;
+	const isWaitingGPSUpdate = isTrackerOnline && !trackerMetadata;
 
 	/*
 	 | ************************
@@ -39,15 +38,14 @@ export function LivePage() {
 	 */
 
 	function startTrace() {
-		const trackersArray = Object.values(trackers);
-		if (trackersArray.length === 0) {
+		if (!tracker.uid) {
 			return;
 		}
 
 		setLoading(true);
 
 		api
-			.post("/trace", { tracker_uid: trackersArray[0].uid })
+			.post("/trace", { tracker_uid: tracker.uid })
 			.then(({ data }) => dispatch(startTraceSlice(data)))
 			.catch(console.error)
 			.finally(() => setLoading(false));
@@ -67,21 +65,6 @@ export function LivePage() {
 			.finally(() => setLoading(false));
 	}
 
-	useEffect(() => {
-		//api
-		//	.get("/recoverData")
-		//	.then((res) => {
-		//		console.debug(res);
-		//		if (res.status === 204) {
-		//			send("freshStart");
-		//			return;
-		//		}
-		//
-		//		send("alreadyRecording", res.data);
-		//	})
-		//	.catch(console.error);
-	}, []);
-
 	/*
 	 | ************************
 	 | Events handlers
@@ -98,12 +81,12 @@ export function LivePage() {
 			return;
 		}
 
-		if (!lastMetadata?.coordinate || lastMetadata.coordinate.length !== 2) {
+		if (!trackerMetadata?.coordinate || trackerMetadata.coordinate.length !== 2) {
 			return;
 		}
 
-		map.current.panTo(lastMetadata.coordinate);
-	}, [autoPan, lastMetadata]);
+		map.current.panTo(trackerMetadata.coordinate);
+	}, [autoPan, trackerMetadata]);
 
 	useEffect(() => {
 		function updateTraceCoordinates(data) {
@@ -122,21 +105,6 @@ export function LivePage() {
 	 | Render
 	 | ************************
 	 */
-	const stats = useMemo(() => {
-		//let i = 0,
-		//	m = path.length,
-		//	distance = 0;
-		//
-		//if (path.length >= 2) {
-		//	for (; i < m - 1; i++) {
-		//		distance += calcDistance(path[i], path[i + 1]);
-		//	}
-		//}
-
-		return {
-			distance: 0
-		};
-	}, []);
 
 	return (
 		<Layout>
@@ -167,9 +135,7 @@ export function LivePage() {
 					 */}
 					<div className={styles.overlayBody}>
 						<div className="m-2 bg-white p-1 text-xs rounded inline-block">
-							{Object.values(trackersMetadata).map(({ satellites }) => (
-								<>satellites: {satellites?.active}&nbsp;({satellites?.visible})<br /></>
-							))}
+							satellites: {trackerMetadata.satellites?.active}&nbsp;({trackerMetadata.satellites?.visible})
 						</div>
 					</div>
 
@@ -204,10 +170,7 @@ export function LivePage() {
 					whenCreated={handleCreated}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
-					{Object.entries(trackersMetadata).map(([uid, meta]) => (
-						meta?.coordinate?.length === 2 &&
-						<Circle key={uid} center={meta.coordinate} radius={meta.precision * 2.5} color="#fb923c" />
-					))}
+					<Circle center={trackerMetadata.coordinate} radius={trackerMetadata.precision * 2.5} color="#fb923c" />
 					{hasTrace && <Polyline positions={trace?.coordinates || emptyArray} color="#fb923c" />}
 				</MapContainer>
 			</div>
