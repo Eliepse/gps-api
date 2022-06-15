@@ -165,8 +165,8 @@ export function LivePage() {
 					zoomControl={false}
 					attributionControl={false}
 					className="h-full z-0"
-					center={[48.81602, 2.30063]}
-					zoom={19}
+					center={tracker.lastCoordinate || [48.81602, 2.30063]}
+					zoom={18}
 					whenCreated={handleCreated}
 				>
 					<TileLayer url="https://b.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />

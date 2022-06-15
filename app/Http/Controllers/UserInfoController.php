@@ -9,6 +9,7 @@ use App\Models\Trace;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class UserInfoController extends Controller
@@ -30,11 +31,11 @@ class UserInfoController extends Controller
 
 		// User's tracker info
 		$isUserTrackerOnline = ! $user->tracker->isBanned() && in_array($user->tracker->getMercureId(), $onlineTrackersId);
-		$userTrackerPayload = [...$user->tracker->toArray(), "active" => $isUserTrackerOnline];
+		$lastTrace = Cache::get("tracker:{$user->tracker->id}:last-location");
+		$userTrackerPayload = [...$user->tracker->toArray(), "active" => $isUserTrackerOnline, "lastCoordinate" => $lastTrace];
 
 		/** @var Trace $activeTrace */
 		$activeTrace = $user->traces()->where("status", TraceStatus::Recording)->orderByDesc("id")->first();
-
 
 		if ($activeTrace) {
 			return [
