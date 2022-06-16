@@ -152,7 +152,7 @@ export function LivePage() {
 								<br />
 								{(trace.length / 1000).toFixed(3)} km
 								<br />
-								{trace.averageSpeed && `${trace.averageSpeed} km/s`}
+								{trace.averageSpeed && `${trace.averageSpeed.toFixed(1)} km/h`}
 							</Display>
 						)}
 
@@ -162,7 +162,7 @@ export function LivePage() {
 									<path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
 								</svg>
 							</span>
-							{trackerMetadata.satellites ? (
+							{trackerMetadata?.satellites?.active > 0 ? (
 								<span>{trackerMetadata.satellites?.active}&nbsp;({trackerMetadata.satellites?.visible})</span>
 							) : "---"}
 						</Display>
