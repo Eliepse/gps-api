@@ -177,7 +177,7 @@ export function LivePage() {
 					zoom={18}
 					whenCreated={handleCreated}
 				>
-					<TileLayer url="https://{s}.tile-cyclosm.openstreetmap.fr/[cyclosm|cyclosm-lite]/{z}/{x}/{y}.png" />
+					<TileLayer url="https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png" />
 					{trackerMetadata?.coordinate?.length === 2 && (
 						<Circle center={trackerMetadata.coordinate} radius={(trackerMetadata?.precision || 4) * 2.5} color="#fb923c" />
 					)}
