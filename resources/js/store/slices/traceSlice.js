@@ -23,7 +23,7 @@ export const slice = createSlice({
 				return;
 			}
 
-			return { ...action.payload, coordinates: [] };
+			return { ...action.payload, coordinates: [], timeDelta: dayjs().diff(action.payload.started_at) };
 		},
 		stop: (state, action) => {
 			if (!action.payload) {
@@ -32,7 +32,7 @@ export const slice = createSlice({
 
 			// Update average speed
 			if (state.started_at && state.length > 0) {
-				const duration = dayjs.duration(dayjs(state.finished_at).diff(state.started_at)).asSeconds();
+				const duration = dayjs.duration(dayjs(state.finished_at).diff(state.started_at)).asSeconds() + (state.timeDelta || 0);
 				state.averageSpeed = msToKmh(calcSpeed(state.length, duration));
 			}
 
