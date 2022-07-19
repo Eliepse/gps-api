@@ -148,7 +148,7 @@ export function LivePage() {
 
 						{hasTrace && (
 							<Display signalLost={isWaitingGPSUpdate} className="px-4 flex items-center">
-								<Timer start={trace.started_at} end={trace.finished_at} />
+								<Timer start={dayjs(trace.started_at).subtract(trace.timeDelta || 0)} end={trace.finished_at} />
 								<br />
 								{(trace.length / 1000).toFixed(3)} km
 								<br />
