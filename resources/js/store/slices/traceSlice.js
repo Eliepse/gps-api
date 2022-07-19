@@ -23,20 +23,27 @@ export const slice = createSlice({
 				return;
 			}
 
-			return { ...action.payload, coordinates: [], timeDelta: dayjs().diff(action.payload.started_at) };
+			const startedAt = dayjs(action.payload.started_at);
+			const timeDelta = dayjs().diff(startedAt);
+
+			return { ...action.payload, coordinates: [], started_at: startedAt.add(timeDelta) };
 		},
 		stop: (state, action) => {
 			if (!action.payload) {
 				return;
 			}
 
+			const finishedAt = dayjs(action.payload.finished_at);
+			const timeDelta = dayjs().diff(finishedAt);
+			const correctedFinishedAt = finishedAt.add(timeDelta);
+
 			// Update average speed
 			if (state.started_at && state.length > 0) {
-				const duration = dayjs.duration(dayjs(state.finished_at).diff(state.started_at)).asSeconds() + (state.timeDelta || 0);
+				const duration = dayjs.duration(correctedFinishedAt.diff(state.started_at)).asSeconds();
 				state.averageSpeed = msToKmh(calcSpeed(state.length, duration));
 			}
 
-			return { ...state, ...action.payload };
+			return { ...state, ...action.payload, finished_at: correctedFinishedAt };
 		},
 		addCoordinates: (state, action) => {
 			state.coordinates = [...state.coordinates, ...action.payload];
